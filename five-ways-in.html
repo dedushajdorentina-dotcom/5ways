@@ -286,6 +286,14 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 .clue-box[open] { gap: .6rem; }
 @media (min-width: 54rem) { .res { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.5rem); max-height: calc(100vh - 6rem); overflow-y: auto; padding-right: .2rem; } }
 
+.nudge { background: var(--surface); border: 2px dashed var(--brand); border-radius: 12px; padding: .55rem .8rem; font-size: .95rem; }
+.nudge[hidden] { display: none; }
+.unlock { display: flex; gap: .5rem; flex-wrap: wrap; }
+.unlock input { font: inherit; padding: .55rem .8rem; border-radius: 12px; border: 2px solid var(--line); min-width: 12rem; }
+.submit-status.err { color: #b42318; font-weight: 700; }
+.submit-status:empty { display: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.overview { font-size: 1.05rem; }
 .helped-line { font-size: .8rem; font-weight: 700; color: var(--c); margin-top: .15rem; }
 .tab .seen { font-size: .85rem; }
 @media (max-width: 54rem) { .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .3rem; scrollbar-width: thin; } .tab { flex: none; } }
@@ -310,7 +318,6 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     <nav class="nav" aria-label="Sections">
       <button type="button" data-route="play">Group desk</button>
       <button type="button" data-route="board">Class board</button>
-      <button type="button" data-route="guide">Facilitator guide</button>
     </nav>
   </div>
 </header>
@@ -334,7 +341,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     bl:  { name: 'Balanced Literacy', page: 'p. 10', short: 'A teacher responds to what you need' },
     svr: { name: 'Simple View of Reading', page: 'p. 10', short: 'Decoding × language comprehension' },
     avr: { name: 'Active View of Reading', page: 'p. 11', short: 'Knowledge, word parts and self-checking' },
-    sl:  { name: 'Structured Literacy', page: 'p. 11', short: 'Explicit, systematic sounds and patterns' }
+    sl:  { name: 'Structured Literacy', page: 'p. 11', short: 'A decoding-focused example: explicit, systematic sounds and patterns' }
   };
   const ORDER = ['wl', 'bl', 'svr', 'avr', 'sl'];
   const HELPED = ['Say the words', 'Know what words mean', 'See how it fits together', 'Get the big picture', 'Figure out what isn’t said', 'Not much yet'];
@@ -394,6 +401,8 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
   ];
   const byId = Object.fromEntries(FRAGS.map(f => [f.id, f]));
   const CROSSED = [['i', 'the', 'River, Moon, Oak'], ['anna', 'gift', 'Moon, Oak'], ['ando', 'gate (andonna, andossë)', 'Oak, Fern'], ['essë', 'name (essërya)', 'Fern, Star'], ['á', 'command', 'Oak, Fern, Star'], ['-ssë', 'at, in', 'River, Fern'], ['-rya', 'its', 'Fern, Star']];
+  // The code you announce to the class (typed in any capitalization).
+  const UNLOCK_CODE = 'unlock';
   const wordsOf = f => f.elv.split(' ').map(w => w.replace(/[.,!]/g, ''));
 
   // ---------- State ----------
@@ -436,6 +445,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <p class="eyebrow">An Elvish reading challenge</p>
         <h1>Five sentences. One lost passage.</h1>
         <p>Your group will get one sentence of a passage in Quenya, one of Tolkien’s Elvish languages, written in Tengwar, his Elvish alphabet. Work out what it means. You’ll have five resources, each built on a different approach to reading instruction. When every group is ready, the class puts the whole passage back together.</p>
+        <p class="overview"><b>Choose your group → Explore the resources → Share your interpretation → Rebuild the passage.</b></p>
         <p class="muted">Pick the group your facilitator gave you. One device per group.</p>
       </section>
       <div class="groups">
@@ -481,7 +491,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <div style="display:grid;gap:.35rem"><h3>Your sentence</h3><p class="muted">No help yet. Look closely. What do you notice? Any repeated letters, long or short words, punctuation?</p></div>
         <div class="elv-sentence">${sentenceHTML(f, false)}</div>
         <p class="muted small">In Tengwar, a single dot marks a pause and two dots end a sentence.</p>
-        <label class="field" for="first">Your first guess<textarea id="first" placeholder="What do you notice? What might it be about?">${esc(st.first)}</textarea></label>
+        <label class="field" for="first">What do you notice?<textarea id="first" placeholder="Repeated letters, word lengths, punctuation, patterns…">${esc(st.first)}</textarea></label>
         <div class="actions"><button type="button" class="primary" id="go">Open the five resources</button></div>
       </section>
     </div>`;
@@ -561,15 +571,17 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <label class="field" for="meaning">Our current interpretation <span class="muted small" style="font-weight:400">Revise it as you try each resource. It doesn’t need to be word for word.</span><textarea id="meaning" style="min-height:4.5rem">${esc(st.meaning)}</textarea></label>
           <fieldset><legend>Confidence</legend><div class="conf">${['Low', 'Medium', 'High'].map(c => `<label class="opt"><input type="radio" name="confidence" id="conf-${c}" value="${c}" ${st.confidence === c ? 'checked' : ''}><span>${c}</span></label>`).join('')}</div></fieldset>
         </section>
-        <section class="card">
-          <div style="display:grid;gap:.2rem"><h3>Clue notebook</h3><p class="muted small">Optional. Tap a word above, then note what you think it, or part of it, means.</p></div>
+        <details class="card clue-box" id="notebook" ${st.notesOpen || st.clues.length ? 'open' : ''}>
+          <summary>Clue notebook <span class="muted small" style="font-weight:400">(optional${st.clues.length ? ` · ${st.clues.length} clue${st.clues.length > 1 ? 's' : ''}` : ''})</span></summary>
+          <p class="muted small">Tap a word above, then note what you think it, or part of it, means.</p>
           <div class="clues" id="clues">${st.clues.map((c, i) => `<div class="clue"><b>${esc(c.el)}</b><span>→ ${esc(c.means)}</span><button type="button" data-del="${i}" aria-label="Remove clue">Remove</button></div>`).join('')}</div>
           <div class="add-clue">
             <label for="clue-el">Word or part<input type="text" id="clue-el" placeholder="e.g. word 2"></label>
             <label for="clue-means">We think it means<input type="text" id="clue-means" placeholder="e.g. maybe “door”"></label>
             <button type="button" id="add-clue">+ Add clue</button>
           </div>
-        </section>
+        </details>
+        <p class="nudge" id="nudge" role="status" hidden>Add your best interpretation—or describe what you’re still unsure about.</p>
         <div class="actions"><button type="button" class="primary" id="finish">We’re ready to share</button></div>
       </div>
       <aside class="col res" aria-label="Five resources" id="res">
@@ -586,7 +598,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <p class="eyebrow">Share this with the class</p>
         <div class="elv-sentence">${sentenceHTML(f, false)}</div>
         <div class="table-wrap"><table><tbody>
-          <tr><th scope="row">First guess</th><td>${st.first ? esc(st.first) : '<span class="muted">—</span>'}</td></tr>
+          <tr><th scope="row">What we noticed first</th><td>${st.first ? esc(st.first) : '<span class="muted">—</span>'}</td></tr>
           <tr><th scope="row">What we think it means</th><td><b>${st.meaning ? esc(st.meaning) : '—'}</b></td></tr>
           <tr><th scope="row">Confidence</th><td>${st.confidence || '—'}</td></tr>
           <tr><th scope="row">Clues</th><td>${st.clues.length ? st.clues.map(c => `<span class="pill tag">${esc(c.el)} → ${esc(c.means)}</span>`).join('') : '<span class="muted">—</span>'}</td></tr>
@@ -600,7 +612,12 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         </table></div>
       </section>
       <section class="card">
-        ${st.revealed ? `<p class="eyebrow">Our sentence means</p><p class="revealed">${esc(f.en)}</p>` : `<p class="muted">After you share with the class, you can check your interpretation.</p><div class="actions"><button type="button" id="reveal">Check our interpretation</button></div>`}
+        ${st.revealed ? `<p class="eyebrow">Our sentence means</p><p class="revealed">${esc(f.en)}</p>
+          <p class="muted">How close did you get? Which resources helped, and what was still missing?</p>`
+        : `<h3>Unlock the translation</h3>
+          <p class="muted">Share your interpretation first. Your facilitator will give everyone the unlock code.</p>
+          <div class="unlock"><label for="code" class="sr-only">Unlock code</label><input type="text" id="code" autocomplete="off" placeholder="Unlock code"><button type="button" class="primary" id="unlock">Unlock</button></div>
+          <p class="submit-status err" id="code-msg" role="status" aria-live="polite"></p>`}
         <div class="actions"><button type="button" id="back">Back to the resources</button><button type="button" id="restart">Start over</button></div>
       </section>
     </div>`;
@@ -625,6 +642,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       }
       selWord = i;
       app.querySelectorAll('#sentence .eword').forEach(x => x.classList.toggle('sel', Number(x.dataset.w) === i));
+      const nbk = document.getElementById('notebook'); if (nbk && !nbk.open) { nbk.open = true; st.notesOpen = true; save(); }
       const el = document.getElementById('clue-el'); el.value = `word ${i + 1}`; document.getElementById('clue-means').focus();
     }));
     const add = document.getElementById('add-clue');
@@ -656,12 +674,46 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       if (k === 'meaning') { askMeaning = true; st.teacher.push(`<b>Teacher:</b> ${open}Which word? Tap it in your sentence.`); save(); renderDesk(); document.getElementById('sentence').scrollIntoView({ block: 'center' }); return; }
       save(); renderDesk(); scrollToCard('bl');
     }));
-    const fin = document.getElementById('finish'); if (fin) fin.addEventListener('click', () => { st.stage = 'done'; save(); renderDesk(); window.scrollTo(0, 0); });
-    const rev = document.getElementById('reveal'); if (rev) rev.addEventListener('click', () => { st.revealed = true; save(); renderDesk(); });
+    const nb = document.getElementById('notebook'); if (nb) nb.addEventListener('toggle', () => { st.notesOpen = nb.open; save(); });
+    const fin = document.getElementById('finish'); if (fin) fin.addEventListener('click', () => {
+      const nudge = document.getElementById('nudge');
+      if ((!st.meaning.trim() || !st.confidence) && nudge.hidden) { nudge.hidden = false; fin.textContent = 'Continue anyway'; return; }
+      st.stage = 'done'; save(); renderDesk(); window.scrollTo(0, 0); });
+    const unlock = document.getElementById('unlock');
+    if (unlock) {
+      const tryCode = () => {
+        const v = document.getElementById('code').value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+        if (v === UNLOCK_CODE) { st.revealed = true; save(); renderDesk(); }
+        else document.getElementById('code-msg').textContent = 'Not quite. Wait for the code from your facilitator.';
+      };
+      unlock.addEventListener('click', tryCode);
+      document.getElementById('code').addEventListener('keydown', e => { if (e.key === 'Enter') tryCode(); });
+    }
     const back = document.getElementById('back'); if (back) back.addEventListener('click', () => { st.stage = 'work'; save(); renderDesk(); window.scrollTo(0, 0); });
     const restart = document.getElementById('restart'); if (restart) restart.addEventListener('click', () => { delete S.groups[f.id]; save(); renderDesk(); window.scrollTo(0, 0); });
   }
   function scrollToCard() { const c = document.getElementById('res'); if (c) c.scrollIntoView({ block: 'nearest' }); }
+
+  // ---------- Celebration: a short confetti burst when the passage is rebuilt ----------
+  function celebrate() {
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = document.createElement('canvas'), ctx = c.getContext('2d');
+    c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+    document.body.appendChild(c);
+    const W = c.width = innerWidth, H = c.height = innerHeight;
+    const cols = ['wl', 'bl', 'svr', 'avr', 'sl'].map(t => getComputedStyle(document.documentElement).getPropertyValue('--' + t).trim() || '#f5b301');
+    const bits = [];
+    [[0, H], [W, H], [W / 2, H]].forEach(([x0, y0], k) => { for (let i = 0; i < 70; i++) bits.push({
+      x: x0, y: y0, vx: (k === 0 ? 1 : k === 1 ? -1 : (Math.random() - .5) * 1.6) * (4 + Math.random() * 7), vy: -(12 + Math.random() * 10),
+      r: Math.random() * 6.28, vr: (Math.random() - .5) * .3, w: 7 + Math.random() * 6, h: 4 + Math.random() * 4, c: cols[i % cols.length] }); });
+    const t0 = performance.now();
+    (function frame(t) {
+      ctx.clearRect(0, 0, W, H);
+      bits.forEach(b => { b.vy += .35; b.vx *= .99; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore(); });
+      if (t - t0 < 3500) requestAnimationFrame(frame); else c.remove();
+    })(t0);
+  }
 
   // ---------- Class board ----------
   function renderBoard() {
@@ -675,6 +727,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         ${rainbow}
         <p class="eyebrow">Class board · shared screen</p>
         <h1>Put the passage back together.</h1>
+        <p class="nudge"><b>Your group’s answers stay on your own computer or phone. They don’t show up on this shared screen, so each group shares aloud.</b></p>
         <p>Each group reads what it thinks its sentence means, and shares any clues. Then decide the order as a class. Tap a sentence to place it; tap a slot to send it back.</p>
         <label class="opt" style="width:fit-content"><input type="checkbox" id="show" ${B.show ? 'checked' : ''}><span>Show the English meanings</span></label>
       </section>
@@ -701,7 +754,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <ol class="qs">
             <li>Which resources helped you <b>say the words</b>?</li>
             <li>Which helped you <b>make meaning</b>, understanding and going beyond the words?</li>
-            <li>Did any one resource do everything?</li>
+            <li>What did each resource help you do, and what remained unresolved?</li>
             <li>What happened when you combined them? Which did you open first, and why?</li>
             <li>Which words or word parts did you recognize from another group’s sentence?</li>
           </ol>
@@ -717,7 +770,12 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         </section>
       </div>`;
     document.getElementById('show').addEventListener('change', e => { B.show = e.target.checked; save(); renderBoard(); });
-    app.querySelectorAll('[data-frag]').forEach(b => b.addEventListener('click', () => { if (B.order.length < 5 && !B.order.includes(b.dataset.frag)) { B.order.push(b.dataset.frag); save(); renderBoard(); } }));
+    app.querySelectorAll('[data-frag]').forEach(b => b.addEventListener('click', () => {
+      if (B.order.length < 5 && !B.order.includes(b.dataset.frag)) {
+        B.order.push(b.dataset.frag); save(); renderBoard();
+        if (B.order.length === 5 && B.order.every((id, i) => byId[id].order === i + 1)) celebrate();
+      }
+    }));
     app.querySelectorAll('[data-slot]').forEach(b => b.addEventListener('click', () => { B.order.splice(Number(b.dataset.slot), 1); save(); renderBoard(); }));
     document.getElementById('clear').addEventListener('click', () => { B.order = []; save(); renderBoard(); });
     const nx = document.getElementById('next'); if (nx) nx.addEventListener('click', () => { B.step = 3; save(); renderBoard(); });
@@ -737,7 +795,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <section><h2>Flow</h2>
           <div class="row"><b>First look</b><span>Groups see their sentence with no help and write what they notice.</span></div>
           <div class="row"><b>Five ways in</b><span>Groups open resources in any order, note optional clues, and tag what each resource helped them do. Their main task is an interpretation of the whole sentence, with a confidence rating.</span></div>
-          <div class="row"><b>Share</b><span>Groups share their interpretation and resource reflections, then may check their sentence.</span></div>
+          <div class="row"><b>Share</b><span>Groups share their interpretation and resource reflections aloud. Then announce the unlock code, <b>unlock</b>, so every group sees its translation at once. Reflect on how close they got, then rebuild the passage together.</span></div>
           <div class="row"><b>Class board</b><span>Rebuild the passage, see which words crossed sentences, discuss, then connect to NC.</span></div>
           <p class="muted small">Timing depends on your slot. Roughly: first look 2 min, resources 10 min, rebuild 3 min, discussion 5–10 min.</p></section>
         <section><h2>How each resource reflects its theory</h2>
