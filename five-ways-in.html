@@ -769,7 +769,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <div class="fact"><p>Thomas argues that the reading debate keeps swinging between approaches, and that no single theory should be treated as the whole answer.</p><p class="src">Thomas, 2022</p><p class="q">After today, where do you agree or disagree? What should a reading policy guarantee in every classroom, and where should teachers decide?</p></div>`}
         </section>
       </div>`;
-    document.getElementById('show').addEventListener('change', e => { B.show = e.target.checked; save(); renderBoard(); });
+    document.getElementById('show').addEventListener('change', e => { if (e.target.checked && !B.unlocked) { const c = (window.prompt('Enter the unlock code') || '').trim().toLowerCase(); if (c !== UNLOCK_CODE) { e.target.checked = false; return; } B.unlocked = true; } B.show = e.target.checked; save(); renderBoard(); });
     app.querySelectorAll('[data-frag]').forEach(b => b.addEventListener('click', () => {
       if (B.order.length < 5 && !B.order.includes(b.dataset.frag)) {
         B.order.push(b.dataset.frag); save(); renderBoard();
