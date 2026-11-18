@@ -318,6 +318,10 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 .emoji-art { font-size: 3rem; line-height: 1.3; text-align: center; padding: 1rem; background: var(--bg); border-radius: 12px; letter-spacing: .3rem; }
 .ready { display: grid; gap: .4rem; }
 .ready ul { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; }
+/* phrase line */
+.phraseline { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem .8rem; }
+.phraseline .slot { flex: 0 0 auto; min-width: 8.5rem; }
+.connector { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; color: var(--ink); }
 </style>
 </head>
 <body>
@@ -357,15 +361,15 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 
   // ---------- The five sentences: Quenya (see the facilitator guide for notes on each word) ----------
   const FRAGS = [
-    { id: 'oak', group: 'Oak', order: 1, elv: 'Toronya polë henta mai.', en: 'My brother can read well.', key: 2, keyEn: 'read',
+    { id: 'oak', group: 'Oak', order: 4, elv: 'Toronya polë henta mai.', en: 'My brother can read well.', key: 2, keyEn: 'read',
       art: '👦📖👧', artLabel: 'A boy reading a big book while his little sister watches',
       pron: ['TOR-on-ya', 'POL-eh', 'HEN-ta', 'my'],
       heard: [['toron', 'brother'], ['pol-', 'can, is able to'], ['henta', 'read'], ['mai', 'well']],
       story: ['Every evening after school, Teo sits down with a big book.', 'His little sister watches him. She thinks he reads so well!'],
       parts: [['-nya', 'my'], ['pol-', 'can']],
-      fits: 'First comes who (my brother). Then can. Then what he does (read). The last word says how (well).',
+      fits: 'First comes who. Then a word for being able to. Then the action. The last word says how.',
       lesson: 'Look at the first letter. A small mark sits on top of each letter. That mark is the vowel.' },
-    { id: 'moon', group: 'Moon', order: 3, elv: 'Rillumë tulilmë mancacoanna.', en: 'We visit the store often.', key: 0, keyEn: 'often',
+    { id: 'moon', group: 'Moon', order: 5, elv: 'Rillumë tulilmë mancacoanna.', en: 'We visit the store often.', key: 0, keyEn: 'often',
       art: '👨‍👩‍👧🛒🏪', artLabel: 'A family walking to a store',
       pron: ['RIL-loo-meh', 'too-LIL-meh', 'man-ka-ko-AN-na'],
       heard: [['rillumë', 'often, many times'], ['tul-', 'come'], ['-lmë', 'we'], ['coa', 'house']],
@@ -373,15 +377,15 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       parts: [['manca', 'trade: buying and selling'], ['coa', 'house'], ['-nna', 'to, towards']],
       fits: 'The first word says how often. The second says who goes (we). The last word says where.',
       lesson: 'The last word has a bar under one letter. The bar doubles it, so n becomes nn.' },
-    { id: 'fern', group: 'Fern', order: 4, elv: 'Elyë ná maihanda hína.', en: 'You are a very smart kid.', key: 2, keyEn: 'smart',
+    { id: 'fern', group: 'Fern', order: 3, elv: 'Elyë ná maihanda hína.', en: 'You are a very smart kid.', key: 0, keyEn: 'you',
       art: '🧒🧩⭐', artLabel: 'A child with a finished puzzle and a gold star',
       pron: ['EL-yeh', 'nah', 'my-HAN-da', 'HEE-na'],
-      heard: [['ná', 'is, are'], ['hína', 'child, kid'], ['handa', 'smart'], ['mai-', 'very, extra well']],
+      heard: [['elyë', 'you'], ['ná', 'is, are'], ['hína', 'child, kid'], ['handa', 'smart'], ['mai-', 'very, extra well']],
       story: ['Mia finished the hardest puzzle in her class.', 'Her teacher smiled and said, “Well done!”'],
       parts: [['mai-', 'very, extra well'], ['handa', 'smart']],
-      fits: 'First comes who (you). Then is. Then what kind of kid (very smart). The last word is the kid.',
+      fits: 'First comes who. Then a short word for is. Then what kind of kid. The last word names the kid.',
       lesson: 'The long mark in the last word sits on a tall letter. Long vowels sit on a long carrier.' },
-    { id: 'sun', group: 'Sun', order: 2, elv: 'I parmasan harya vinyë parmar.', en: 'The library has new books.', key: 4, keyEn: 'books',
+    { id: 'sun', group: 'Sun', order: 1, elv: 'I parmasan harya vinyë parmar.', en: 'The library has new books.', key: 4, keyEn: 'books',
       art: '📚🏛️🆕', artLabel: 'A library full of new books',
       pron: ['ee', 'PAR-ma-san', 'HAR-ya', 'VIN-yeh', 'PAR-mar'],
       heard: [['i', 'the'], ['parma', 'book'], ['harya', 'has, holds'], ['vinyë', 'new']],
@@ -389,18 +393,20 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       parts: [['parma', 'book'], ['parmasan', 'a place for books']],
       fits: 'The first two words say the place. Then comes has. Then new. The last word is the thing it has.',
       lesson: 'The first word is a short stroke with a dot on top. A vowel with no letter before it sits on a short carrier. The dot means i.' },
-    { id: 'star', group: 'Star', order: 5, elv: 'Rië tyalin tyalië alassen.', en: 'I only play games for fun.', key: 3, keyEn: 'fun',
+    { id: 'star', group: 'Star', order: 2, elv: 'Rië tyalin tyalië alassen.', en: 'I only play games for fun.', key: 3, keyEn: 'fun',
       art: '🎮⚽😄', artLabel: 'A game controller, a ball and a smiling face',
       pron: ['REE-eh', 'TYA-lin', 'TYA-li-eh', 'a-LAS-sen'],
-      heard: [['rië', 'only'], ['tyal-', 'play'], ['tyalië', 'game, play'], ['alassë', 'joy, fun']],
+      heard: [['rië', 'only'], ['tyalin', 'I play'], ['tyalië', 'game, play'], ['alassë', 'joy, fun']],
       story: ['At recess, Sam races out to the yard.', 'No homework, no rules, just a game. It is the best part of the day!'],
       parts: [['-n', 'for, to'], ['-in', 'I']],
-      fits: 'The first word says only. The second says what I do (play). The third is the games. The last says why (for fun).',
+      fits: 'The first word says how much. The second says what I do. The third is what I do it with. The last says why.',
       lesson: 'Look at the second letter in the last word. Two letters here sound like ss. The letter is turned over so a vowel mark can sit on it.' }
   ];
   const byId = Object.fromEntries(FRAGS.map(f => [f.id, f]));
   // The secret phrase the class builds from the five keywords, in the order of "order" above.
-  const FINAL_EN = 'Read books often. It’s smart and fun!';
+  // Keywords (k) go in boxes. Plain English words (t) are already on the board between the boxes.
+  const PHRASE = [{ k: 'sun' }, { t: 'are' }, { k: 'star' }, { t: ', and' }, { k: 'fern' }, { t: 'should' }, { k: 'oak' }, { k: 'moon' }];
+  const FINAL_EN = (() => { const t = PHRASE.map(p => p.k ? byId[p.k].keyEn : p.t).join(' ').replace(/ ,/g, ','); return t.charAt(0).toUpperCase() + t.slice(1) + '.'; })();
   // The code you announce to the class (typed in any capitalization).
   const UNLOCK_CODE = 'unlock';
   const wordsOf = f => f.elv.split(' ').map(w => w.replace(/[.,!]/g, ''));
@@ -645,7 +651,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       if (askMeaning) {
         askMeaning = false;
         const heard = f.heard.find(h => h[0].toLowerCase() === words[i].toLowerCase());
-        const gloss = heard ? heard[1] : (f.parts.find(p => words[i].toLowerCase().includes(p[0].replace(/-/g, ''))) || [])[1];
+        const gloss = heard ? heard[1] : (f.parts.find(p => { const w = words[i].toLowerCase(), a = p[0].replace(/-/g, ''); return p[0].startsWith('-') ? w.endsWith(a) : p[0].endsWith('-') ? w.startsWith(a) : w.includes(a); }) || [])[1];
         st.teacher.push(`<b>Teacher:</b> Word ${i + 1}? ${gloss ? `Think of it as “${esc(gloss)}.”` : (words[i].length <= 3 ? 'That one is small. Read the words around it and ask what would connect them.' : 'I won’t give that one away. Has another group got a word that looks like it?')}`);
         save(); renderDesk(); scrollToCard('bl'); return;
       }
@@ -737,21 +743,21 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <p class="eyebrow">Class board · shared screen</p>
         <h1>Unlock the secret phrase.</h1>
         <p class="nudge"><b>Your group’s answers stay on your own computer or phone. They don’t show up on this shared screen, so each group shares aloud.</b></p>
-        <p>Each group shares its keyword and what it thinks it means. Then decide the order together. Tap a keyword to place it. Tap a slot to send it back.</p>
+        <p>Each group shares its keyword and what it thinks it means. The small English words are already in place. Decide together which keyword goes in each box. Tap a keyword to place it. Tap a box to send it back.</p>
         <label class="opt" style="width:fit-content"><input type="checkbox" id="show" ${B.show ? 'checked' : ''}><span>Show the English keywords</span></label>
       </section>
       <div class="board">
         <section class="card">
           <div class="stage-title"><span class="num">1</span><h2>Put the keywords in order</h2></div>
-          <div class="slots">${[0, 1, 2, 3, 4].map(i => { const id = B.order[i]; return id
+          <div class="phraseline">${(() => { let n = -1; return PHRASE.map(p => { if (p.t) return `<span class="connector">${esc(p.t)}</span>`; n++; const i = n, id = B.order[i]; return id
             ? `<button type="button" class="slot filled" data-slot="${i}"><span class="n">Word ${i + 1}</span><span style="font-family:var(--f-display);font-weight:600;color:var(--brand)">${byId[id].group}</span>${B.show ? `<span class="small">${esc(byId[id].keyEn)}</span>` : ''}</button>`
-            : `<div class="slot"><span class="n">Word ${i + 1}</span></div>`; }).join('')}</div>
+            : `<div class="slot"><span class="n">Word ${i + 1}</span></div>`; }).join('') + '<span class="connector">.</span>'; })()}</div>
           <div class="pile">${pile.map(id => { const f = byId[id]; return `<button type="button" class="frag" data-frag="${id}" ${B.order.includes(id) ? 'disabled' : ''}><span class="gname">${f.group} group</span>${line(f)}${B.show ? `<span class="small">${esc(f.keyEn)}</span>` : ''}</button>`; }).join('')}</div>
           ${full ? (correct
             ? `<div class="result ok"><p class="eyebrow">Secret phrase unlocked</p>
                 <p class="passage">${esc(FINAL_EN)}</p>
                 <div class="crossed">${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => `<div><b>${f.group}</b> · ${esc(f.keyEn)}<br><span class="small muted">${esc(f.en)}</span></div>`).join('')}</div></div>`
-            : `<div class="result no"><p><b>Not quite.</b> Say the keywords out loud. Which ones sound like they go together?</p></div>`) : ''}
+            : `<div class="result no"><p><b>Not quite.</b> Read the small words out loud. Which keyword could fit in each box?</p></div>`) : ''}
           <div class="actions"><button type="button" id="clear">Clear the slots</button></div>
         </section>
 
@@ -772,7 +778,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <div class="stage-title"><span class="num">3</span><h2>From Elvish to North Carolina</h2></div>
           ${B.step < 3 ? `<div class="reveal-gate"><p class="muted">Open this after the discussion.</p><button type="button" class="primary" id="next">Connect it to NC</button></div>` : `
           <div class="fact"><p>North Carolina’s Excellent Public Schools Act of 2021 defines the Science of Reading as covering language, phonological and phonemic awareness, phonics and spelling, fluency, vocabulary, oral language and comprehension.</p><p class="src">North Carolina General Assembly, 2021, Part II (G.S. 115C-83.3(7a))</p><p class="q">Which of today’s four resources does that definition draw on? Which does it leave out?</p></div>
-          <div class="fact"><p>To carry out the law, the state trained every K–5 teacher in LETRS. Rowe and Thrailkill, who completed the training, argue it focused mainly on phonemic awareness, phonics and spelling, with thinner treatment of vocabulary, comprehension and writing.</p><p class="src">Rowe & Thrailkill, 2025, pp. 4, 11</p><p class="q">If your group had only one of today’s resources, which would you have chosen, and what would you have missed?</p></div>
+          <div class="fact"><p>To carry out the law, the state required every K–5 teacher to complete LETRS training. Rowe and Thrailkill, who completed the training, argue it focused mainly on phonemic awareness, phonics and spelling, with thinner treatment of vocabulary, comprehension and writing.</p><p class="src">Rowe & Thrailkill, 2025, pp. 4, 11</p><p class="q">If your group had only one of today’s resources, which would you have chosen, and what would you have missed?</p></div>
           <div class="fact"><p>There was also a fifth way in that we didn’t give you: motivation. The Active View of Reading adds motivation and engagement to the Simple View.</p><p class="src">Thomas, 2022, p. 11</p><p class="q">What kept you going today? What would have made you want to stop?</p></div>
           <div class="fact"><p>Thomas argues that the reading debate keeps swinging between approaches, and that no single theory should be treated as the whole answer.</p><p class="src">Thomas, 2022</p><p class="q">After today, where do you agree or disagree? What should a reading policy guarantee in every classroom, and where should teachers decide?</p></div>`}
         </section>
@@ -815,7 +821,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <section><h2>Answer key</h2>
           ${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => `<div class="row"><b>${f.order}. ${f.group}</b><span><i>${esc(f.elv)}</i><br>${esc(f.en)}<br><b>Keyword:</b> ${esc(f.keyEn)}</span></div>`).join('')}
           <div class="row"><b>Secret phrase</b><span>${esc(FINAL_EN)}</span></div>
-          <p class="muted small">For discussion question 4 (which approach does NC use?): the Simple View of Reading, with a heavy emphasis on Structured Literacy.</p></section>
+          <p class="muted small">Suggested answer for discussion question 4 (which approach does NC use?): the Simple View of Reading, with a heavy emphasis on Structured Literacy. Groups may reasonably disagree; the NC definition also names vocabulary, oral language and comprehension.</p></section>
         <section><h2>Notes on the Elvish</h2>
           <p class="small">Each sentence is a Quenya rendering built from words in Eldamo, the lexicon of Tolkien’s languages. Some words are modern reconstructions or compounds, not words Tolkien wrote: rillumë (“many times”), parmasan (“library”), and mancacoa (manca “trade” + coa “house”, for “store”). In the Tengwar spelling, a vowel is written above the letter before it. A letter n before another consonant is written as its own letter.</p></section>
         <section><h2>Framing</h2><p>Let groups discover the pattern. Avoid telling them in advance which resource does what. This is a hypothetical illustration, not evidence about which approach works best.</p></section>
