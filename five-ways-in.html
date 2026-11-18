@@ -309,12 +309,21 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 .glyphline .tw { font-size: 1.45rem; color: var(--ink); }
 .sound .tw { font-size: 1.7rem; min-width: 2rem; text-align: center; color: var(--ink); }
 .cell .glyph, .eword .glyph { display: none; }
+
+/* v4: simpler words, four resources, keyword highlight */
+.eword.key { background: var(--warn-soft); border-color: var(--warn); }
+.keynote { font-size: .9rem; color: var(--muted); }
+.todo { background: var(--brand-soft); border-radius: 16px; padding: .9rem 1.1rem; display: grid; gap: .3rem; }
+.todo ol { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; }
+.emoji-art { font-size: 3rem; line-height: 1.3; text-align: center; padding: 1rem; background: var(--bg); border-radius: 12px; letter-spacing: .3rem; }
+.ready { display: grid; gap: .4rem; }
+.ready ul { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; }
 </style>
 </head>
 <body>
 <header class="topbar">
   <div class="wrap">
-    <div class="brand"><span class="dots" aria-hidden="true"><i style="background:var(--wl)"></i><i style="background:var(--bl)"></i><i style="background:var(--svr)"></i><i style="background:var(--avr)"></i><i style="background:var(--sl)"></i></span>Five Ways In</div>
+    <div class="brand"><span class="dots" aria-hidden="true"><i style="background:var(--wl)"></i><i style="background:var(--bl)"></i><i style="background:var(--svr)"></i><i style="background:var(--sl)"></i></span>Five Ways In</div>
     <nav class="nav" aria-label="Sections">
       <button type="button" data-route="play">Group desk</button>
       <button type="button" data-route="board">Class board</button>
@@ -327,7 +336,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 <script>
 (function () {
   // ---------- Real Tengwar (Classical Quenya mode), rendered with the Alcarin Tengwar font (OFL) ----------
-  const TW = {"river": {"tw": "     ", "words": [{"q": "I", "tw": "", "p": "", "pc": ""}, {"q": "tirmo", "tw": "", "p": "", "pc": ""}, {"q": "caltanë", "tw": "", "p": "", "pc": ""}, {"q": "i", "tw": "", "p": "", "pc": ""}, {"q": "calma", "tw": "", "p": "", "pc": ""}, {"q": "andúnessë", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "órë", "say": "r (before a consonant or at the end)"}, {"c": "", "name": "malta", "say": "m"}, {"c": "", "name": "calma", "say": "c (k)"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "ando", "say": "nd"}, {"c": "", "name": "long carrier", "say": "holds a long vowel: á, é, í, ó, ú"}, {"c": "", "name": "essë nuquerna", "say": "ss (turned over so a vowel mark fits)"}], "marks": [{"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "left curl above (shown on tinco: tu)", "say": "u"}]}, "moon": {"tw": "      ", "words": [{"q": "I", "tw": "", "p": "", "pc": ""}, {"q": "anna", "tw": "", "p": "", "pc": ""}, {"q": "caita", "tw": "", "p": "", "pc": ""}, {"q": "nu", "tw": "", "p": "", "pc": ""}, {"q": "i", "tw": "", "p": "", "pc": ""}, {"q": "nelya", "tw": "", "p": "", "pc": ""}, {"q": "ondo", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "calma", "say": "c (k)"}, {"c": "", "name": "yanta", "say": "i after a vowel, as in ai"}, {"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "ando", "say": "nd"}], "marks": [{"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "bar below (shown on númen: nn)", "say": "doubles the letter (nn)"}, {"c": "", "name": "left curl above (shown on tinco: tu)", "say": "u"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}, {"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}]}, "oak": {"tw": "      ", "words": [{"q": "Á", "tw": "", "p": "", "pc": ""}, {"q": "colë", "tw": "", "p": "", "pc": ""}, {"q": "i", "tw": "", "p": "", "pc": ""}, {"q": "anna", "tw": "", "p": "", "pc": ""}, {"q": "i", "tw": "", "p": "", "pc": ""}, {"q": "yára", "tw": "", "p": "", "pc": ""}, {"q": "andonna", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "long carrier", "say": "holds a long vowel: á, é, í, ó, ú"}, {"c": "", "name": "calma", "say": "c (k)"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "anna", "say": "holds the y-sign"}, {"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "ando", "say": "nd"}], "marks": [{"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "bar below (shown on númen: nn)", "say": "doubles the letter (nn)"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}]}, "fern": {"tw": "   ", "words": [{"q": "Andossë", "tw": "", "p": ",", "pc": ""}, {"q": "á", "tw": "", "p": "", "pc": ""}, {"q": "quetë", "tw": "", "p": "", "pc": ""}, {"q": "essërya", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "ando", "say": "nd"}, {"c": "", "name": "essë nuquerna", "say": "ss (turned over so a vowel mark fits)"}, {"c": "", "name": "long carrier", "say": "holds a long vowel: á, é, í, ó, ú"}, {"c": "", "name": "quessë", "say": "qu (kw)"}, {"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "rómen", "say": "r (before a vowel)"}], "marks": [{"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}]}, "star": {"tw": "    ", "words": [{"q": "Essërya", "tw": "", "p": "", "pc": ""}, {"q": "ná", "tw": "", "p": "", "pc": ""}, {"q": "Lindë", "tw": "", "p": ".", "pc": ""}, {"q": "Á", "tw": "", "p": "", "pc": ""}, {"q": "lasta", "tw": "", "p": "!", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "essë nuquerna", "say": "ss (turned over so a vowel mark fits)"}, {"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "long carrier", "say": "holds a long vowel: á, é, í, ó, ú"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "ando", "say": "nd"}, {"c": "", "name": "silmë", "say": "s"}, {"c": "", "name": "tinco", "say": "t"}], "marks": [{"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}, {"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}]}};
+  const TW = {"oak": {"tw": "   ", "words": [{"q": "Toronya", "tw": "", "p": "", "pc": ""}, {"q": "polë", "tw": "", "p": "", "pc": ""}, {"q": "henta", "tw": "", "p": "", "pc": ""}, {"q": "mai", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "parma", "say": "p"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "hyarmen", "say": "h"}, {"c": "", "name": "malta", "say": "m"}, {"c": "", "name": "yanta", "say": "i after a vowel, as in ai"}], "marks": [{"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}]}, "moon": {"tw": "  ", "words": [{"q": "Rillumë", "tw": "", "p": "", "pc": ""}, {"q": "tulilmë", "tw": "", "p": "", "pc": ""}, {"q": "mancacoanna", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "malta", "say": "m"}, {"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "calma", "say": "c (k)"}, {"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}], "marks": [{"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "left curl above (shown on tinco: tu)", "say": "u"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "bar below (shown on númen: nn)", "say": "doubles the letter (nn, ll)"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "right curl above (shown on tinco: to)", "say": "o"}]}, "fern": {"tw": "   ", "words": [{"q": "Elyë", "tw": "", "p": "", "pc": ""}, {"q": "ná", "tw": "", "p": "", "pc": ""}, {"q": "maihanda", "tw": "", "p": "", "pc": ""}, {"q": "hína", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "long carrier", "say": "holds a long vowel: á, é, í, ó, ú"}, {"c": "", "name": "malta", "say": "m"}, {"c": "", "name": "yanta", "say": "i after a vowel, as in ai"}, {"c": "", "name": "hyarmen", "say": "h"}, {"c": "", "name": "ando", "say": "nd"}], "marks": [{"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}]}, "sun": {"tw": "    ", "words": [{"q": "I", "tw": "", "p": "", "pc": ""}, {"q": "parmasan", "tw": "", "p": "", "pc": ""}, {"q": "harya", "tw": "", "p": "", "pc": ""}, {"q": "vinyë", "tw": "", "p": "", "pc": ""}, {"q": "parmar", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "parma", "say": "p"}, {"c": "", "name": "órë", "say": "r (before a consonant or at the end)"}, {"c": "", "name": "malta", "say": "m"}, {"c": "", "name": "silmë", "say": "s"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "hyarmen", "say": "h"}, {"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "vala", "say": "v"}], "marks": [{"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}]}, "star": {"tw": "   ", "words": [{"q": "Rië", "tw": "", "p": "", "pc": ""}, {"q": "tyalin", "tw": "", "p": "", "pc": ""}, {"q": "tyalië", "tw": "", "p": "", "pc": ""}, {"q": "alassen", "tw": "", "p": ".", "pc": ""}], "letters": [{"c": "", "name": "rómen", "say": "r (before a vowel)"}, {"c": "", "name": "short carrier", "say": "holds a vowel with no consonant before it"}, {"c": "", "name": "tinco", "say": "t"}, {"c": "", "name": "lambë", "say": "l"}, {"c": "", "name": "númen", "say": "n"}, {"c": "", "name": "essë nuquerna", "say": "ss (turned over so a vowel mark fits)"}], "marks": [{"c": "", "name": "dot above (shown on tinco: ti)", "say": "i"}, {"c": "", "name": "acute above (shown on tinco: te)", "say": "e"}, {"c": "", "name": "three dots above (shown on tinco: ta)", "say": "a"}, {"c": "", "name": "two dots below (shown on lambë: ly)", "say": "y after a consonant"}]}};
   const TWWORD = {}; Object.values(TW).forEach(d => d.words.forEach(w => { TWWORD[w.q.toLowerCase()] = w.tw; }));
   const TWP = { ',': '\uE060', '.': '\uE061', '!': '\uE065' };
   const tw = s => `<span class="tw" lang="qya">${s}</span>`;
@@ -339,80 +348,71 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
   const T = {
     wl:  { name: 'Whole Language', page: 'p. 10', short: 'Meaning through whole texts and context' },
     bl:  { name: 'Balanced Literacy', page: 'p. 10', short: 'A teacher responds to what you need' },
-    svr: { name: 'Simple View of Reading', page: 'p. 10', short: 'Decoding × language comprehension' },
+    svr: { name: 'Simple View of Reading', page: 'p. 10', short: 'Decoding × understanding' },
     avr: { name: 'Active View of Reading', page: 'p. 11', short: 'Knowledge, word parts and self-checking' },
-    sl:  { name: 'Structured Literacy', page: 'p. 11', short: 'A decoding-focused example: explicit, systematic sounds and patterns' }
+    sl:  { name: 'Structured Literacy', page: 'p. 11', short: 'Explicit, step-by-step lessons on sounds and patterns' }
   };
-  const ORDER = ['wl', 'bl', 'svr', 'avr', 'sl'];
-  const HELPED = ['Say the words', 'Know what words mean', 'See how it fits together', 'Get the big picture', 'Figure out what isn’t said', 'Not much yet'];
+  const ORDER = ['wl', 'bl', 'svr', 'sl'];
+  const HELPED = ['Say the words', 'Know what words mean', 'See how it fits together', 'Get the big picture', 'Not much yet'];
 
-  // ---------- Illustrations ----------
-  const ART = {
-    lantern: `<svg viewBox="0 0 240 140" role="img" aria-label="An elf on a stone harbour wall lighting a lantern at sunset, boats far out at sea"><defs><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B3A7A"/><stop offset=".6" stop-color="#E9795B"/><stop offset="1" stop-color="#F6C27A"/></linearGradient><radialGradient id="gl1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#FFE9A6" stop-opacity="0"/></radialGradient></defs><rect width="240" height="140" fill="url(#sk1)"/><circle cx="200" cy="92" r="14" fill="#FBD38D"/><rect y="96" width="240" height="44" fill="#2F5D8A"/><path d="M168 100l8-6h10l-4 6zM206 104l6-5h8l-3 5z" fill="#1E2A44"/><rect x="0" y="70" width="120" height="70" fill="#7C7266"/><path d="M0 84h120M0 98h120M0 112h120M30 70v14M70 84v14M40 98v14M90 112v14" stroke="#5E564C" stroke-width="2"/><circle cx="84" cy="46" r="32" fill="url(#gl1)"/><rect x="80" y="60" width="8" height="10" fill="#3A3A3A"/><rect x="72" y="34" width="24" height="28" rx="4" fill="#FFD66B" stroke="#3A3A3A" stroke-width="3"/><path d="M72 34l12-10 12 10" fill="#3A3A3A"/><circle cx="40" cy="38" r="8" fill="#2E4E6E"/><path d="M40 30l-3-7 6 4z" fill="#2E4E6E"/><rect x="32" y="46" width="16" height="24" rx="6" fill="#2E4E6E"/><path d="M48 52l20-6" stroke="#2E4E6E" stroke-width="4" stroke-linecap="round"/></svg>`,
-    stones: `<svg viewBox="0 0 240 140" role="img" aria-label="A row of stones along a path, a small gift half-hidden under the third stone"><rect width="240" height="140" fill="#D8EEDC"/><path d="M0 96q60-18 120-6t120-8V140H0z" fill="#B7D8A8"/><path d="M10 108q110-30 220-12" stroke="#E8DCC0" stroke-width="16" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="100" rx="18" ry="10" fill="#8F8A80"/><ellipse cx="92" cy="92" rx="18" ry="10" fill="#8F8A80"/><ellipse cx="146" cy="88" rx="18" ry="10" fill="#A3978A"/><ellipse cx="200" cy="90" rx="18" ry="10" fill="#8F8A80"/><rect x="156" y="92" width="12" height="10" rx="1.5" fill="#C7356F"/><path d="M162 92v10M156 96h12" stroke="#FCE8D7" stroke-width="2"/><path d="M162 92l-4-4M162 92l4-4" stroke="#C7356F" stroke-width="2" stroke-linecap="round"/><path d="M146 70l-4-8M146 70l4-8" stroke="#6B8F5E" stroke-width="2"/></svg>`,
-    mill: `<svg viewBox="0 0 240 140" role="img" aria-label="An old mill at the end of a sandy path while the sea creeps in from both sides"><rect width="240" height="140" fill="#D9ECF5"/><rect y="70" width="240" height="70" fill="#E8D7AE"/><path d="M0 92q30-10 60 0t60 0V140H0z" fill="#4A8BC0"/><path d="M130 118q30-10 55 0t55 0V140H130z" fill="#4A8BC0"/><path d="M60 140L150 72h14L100 140z" fill="#C9B384"/><rect x="160" y="30" width="44" height="46" fill="#B9A38A"/><path d="M156 32l26-20 26 20z" fill="#8B5E3C"/><rect x="176" y="52" width="12" height="24" fill="#6B4A2E"/><circle cx="214" cy="60" r="16" fill="none" stroke="#6B4A2E" stroke-width="4"/><path d="M214 44v32M198 60h32" stroke="#6B4A2E" stroke-width="3"/><circle cx="96" cy="100" r="6" fill="#5C4B8A"/><rect x="91" y="106" width="10" height="16" rx="4" fill="#5C4B8A"/></svg>`,
-    gate: `<svg viewBox="0 0 240 140" role="img" aria-label="An ancient stone archway at the end of a path"><rect width="240" height="140" fill="#E6EEF7"/><path d="M0 104q60-10 120 0t120-4V140H0z" fill="#B7D8A8"/><path d="M40 140L112 96h16L200 140z" fill="#E8DCC0"/><path d="M84 104V40a36 36 0 0 1 72 0v64h-16V44a20 20 0 0 0-40 0v60z" fill="#9A9187"/><path d="M84 60h16M84 80h16M140 60h16M140 80h16M100 30l-8-10M140 30l8-10" stroke="#7A7268" stroke-width="2"/><rect x="100" y="44" width="40" height="60" fill="#3E3A36" opacity=".35"/><path d="M160 60q14-20 10-40" stroke="#6B8F5E" stroke-width="3" fill="none"/></svg>`,
-    door: `<svg viewBox="0 0 240 140" role="img" aria-label="An elf standing at a great gate with no handle, speaking to it"><rect width="240" height="140" fill="#E9E2F5"/><rect x="120" y="14" width="80" height="126" rx="40" fill="#8B5E3C"/><path d="M160 14v126M120 60h80M120 100h80" stroke="#6B4A2E" stroke-width="3"/><circle cx="62" cy="62" r="14" fill="#5C4B8A"/><path d="M62 48l-4-9 8 5z" fill="#5C4B8A"/><rect x="48" y="78" width="28" height="50" rx="12" fill="#5C4B8A"/><path d="M80 40h30a8 8 0 0 1 8 8v12a8 8 0 0 1-8 8H94l-8 8v-8h-6a8 8 0 0 1-8-8V48a8 8 0 0 1 8-8z" fill="#FFFFFF" stroke="#5C4B8A" stroke-width="2"/><circle cx="88" cy="54" r="2.5" fill="#5C4B8A"/><circle cx="96" cy="54" r="2.5" fill="#5C4B8A"/><circle cx="104" cy="54" r="2.5" fill="#5C4B8A"/></svg>`,
-    listen: `<svg viewBox="0 0 240 140" role="img" aria-label="An open doorway with letters carved above it and two elves leaning in to listen"><rect width="240" height="140" fill="#E4F2E9"/><rect x="90" y="20" width="100" height="120" fill="#B9A38A"/><rect x="118" y="56" width="44" height="84" rx="22" fill="#2F2A26"/><rect x="104" y="30" width="72" height="14" rx="3" fill="#D6C29E"/><path d="M112 37h8M124 37h6M134 37h10M148 37h6M158 37h10" stroke="#6B4A2E" stroke-width="2.5" stroke-linecap="round"/><circle cx="46" cy="70" r="12" fill="#2E7D5B"/><rect x="34" y="84" width="24" height="44" rx="10" fill="#2E7D5B"/><circle cx="74" cy="74" r="11" fill="#D8651A"/><rect x="63" y="87" width="22" height="41" rx="10" fill="#D8651A"/><path d="M92 70q8 6 0 12M98 64q14 12 0 24" stroke="#2F2A26" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`
-  };
-
-  // ---------- The passage: real Quenya, every word attested in Eldamo ----------
+  // ---------- The five sentences: Quenya (see the facilitator guide for notes on each word) ----------
   const FRAGS = [
-    { id: 'river', group: 'River', order: 1, elv: 'I tirmo caltanë i calma andúnessë.', en: 'The watcher kindled the lamp at evening.', art: 'lantern',
-      pron: ['ee', 'TEER-mo', 'KAL-ta-neh', 'ee', 'KAL-ma', 'an-doo-NES-seh'],
-      heard: [['i', 'the'], ['tirmo', 'watcher'], ['caltanë', 'kindled, lit (in the past)'], ['calma', 'lamp']],
-      story: ['The sun sank behind the hills, and the fishing boats were still far out at sea. The old watcher climbed the harbour wall with a spark-stone in her hand.', 'Soon a small light glowed over the water, and one by one the boats turned toward home.'],
-      background: 'At evening, lamps are lit on the harbour wall so that boats can find their way home.',
-      parts: [['-mo', 'a person who does something (tir- = to watch)'], ['-ssë', 'at, in: where or when something happens'], ['cal-', 'a root about light; it appears in more than one word here']],
-      fits: 'First comes who acted, then what they did, then what they did it to. The last word says when.',
-      lesson: 'Look at the first word: one short stroke with a dot above. A vowel with no consonant before it sits on a short carrier, and the dot means i.' },
-    { id: 'moon', group: 'Moon', order: 2, elv: 'I anna caita nu i nelya ondo.', en: 'The gift lies under the third stone.', art: 'stones',
-      pron: ['ee', 'AN-na', 'KY-ta', 'noo', 'ee', 'NEL-ya', 'ON-do'],
-      heard: [['i', 'the'], ['anna', 'gift'], ['caita', 'lies, rests'], ['ondo', 'stone']],
-      story: ['Before she left, the watcher hid something small and precious. She counted the stones along the path, one, two, three, and tucked it beneath one.', 'Whoever finds it will know where to go next.'],
-      background: 'People here mark hiding places by counting stones along a path.',
-      parts: [['nelya', 'an order word, like “first” or “second”'], ['nu', 'a short word that shows position']],
-      fits: 'First comes a thing, then what it does, then where it is.',
-      lesson: 'Find the letter with a bar underneath in word 2. The bar doubles the letter, so n becomes nn.' },
-    { id: 'oak', group: 'Oak', order: 3, elv: 'Á colë i anna i yára andonna.', en: 'Carry the gift to the old gate.', art: 'gate',
-      pron: ['ah', 'KO-leh', 'ee', 'AN-na', 'ee', 'YAH-ra', 'an-DON-na'],
-      heard: [['i', 'the'], ['colë', 'carry, bear'], ['yára', 'old, ancient']],
-      story: ['At the end of the path stands a gate older than anyone can remember. What was hidden was never meant to stay hidden.', 'The gate has waited a long time.'],
-      background: 'The old gate stands at the end of the path that leads away from the stones.',
-      parts: [['á', 'marks a command: someone is being told to do something'], ['-nna', 'to, towards: movement to a place']],
-      fits: 'The first word shows this is an instruction. Then comes what to carry, then where to take it.',
-      lesson: 'The first word is a single long carrier with three dots on top: a long “á”. Long vowels sit on the long carrier.' },
-    { id: 'fern', group: 'Fern', order: 4, elv: 'Andossë, á quetë essërya.', en: 'At the gate, speak its name.', art: 'door',
-      pron: ['an-DOS-seh', 'ah', 'KWEH-teh', 'es-SER-ya'],
-      heard: [['quetë', 'speak, say'], ['essë', 'name']],
-      story: ['The great gate has no handle and no lock. Travelers pound on it, and nothing happens.', 'Only then does the old stone begin to shift.'],
-      background: 'Old gates here open only to the right words.',
-      parts: [['-ssë', 'at, in: where something happens'], ['-rya', 'his, her, its'], ['á', 'marks a command']],
-      fits: 'The part before the comma says where. After the comma is an instruction.',
-      lesson: 'In the last word, two dots under a letter add a “y” sound after it.' },
-    { id: 'star', group: 'Star', order: 5, elv: 'Essërya ná Lindë. Á lasta!', en: 'Its name is Lindë (“song”). Listen!', art: 'listen',
-      pron: ['es-SER-ya', 'nah', 'LIN-deh', 'ah', 'LAS-ta'],
-      heard: [['ná', 'is'], ['Lindë', 'a name; as a word it means “song”'], ['lasta', 'listen']],
-      story: ['Carved above the gate, worn soft by the wind, is a single word. Few people stop to read it.', 'The ones who do hear music, faint and far away.'],
-      background: 'Old places here have secret names, and many of them mean something beautiful.',
-      parts: [['-rya', 'his, her, its'], ['á', 'marks a command']],
-      fits: 'There are two sentences. The first names something. The second is a short instruction.',
-      lesson: 'Look at the very last mark. It works like an exclamation point. What kind of sentence ends that way?' }
+    { id: 'oak', group: 'Oak', order: 1, elv: 'Toronya polë henta mai.', en: 'My brother can read well.', key: 2, keyEn: 'read',
+      art: '👦📖👧', artLabel: 'A boy reading a big book while his little sister watches',
+      pron: ['TOR-on-ya', 'POL-eh', 'HEN-ta', 'my'],
+      heard: [['toron', 'brother'], ['pol-', 'can, is able to'], ['henta', 'read'], ['mai', 'well']],
+      story: ['Every evening after school, Teo sits down with a big book.', 'His little sister watches him. She thinks he reads so well!'],
+      parts: [['-nya', 'my'], ['pol-', 'can']],
+      fits: 'First comes who (my brother). Then can. Then what he does (read). The last word says how (well).',
+      lesson: 'Look at the first letter. A small mark sits on top of each letter. That mark is the vowel.' },
+    { id: 'moon', group: 'Moon', order: 3, elv: 'Rillumë tulilmë mancacoanna.', en: 'We visit the store often.', key: 0, keyEn: 'often',
+      art: '👨‍👩‍👧🛒🏪', artLabel: 'A family walking to a store',
+      pron: ['RIL-loo-meh', 'too-LIL-meh', 'man-ka-ko-AN-na'],
+      heard: [['rillumë', 'often, many times'], ['tul-', 'come'], ['-lmë', 'we'], ['coa', 'house']],
+      story: ['On Saturdays our family walks down the street.', 'We never miss a week. It is our favorite place to go!'],
+      parts: [['manca', 'trade: buying and selling'], ['coa', 'house'], ['-nna', 'to, towards']],
+      fits: 'The first word says how often. The second says who goes (we). The last word says where.',
+      lesson: 'The last word has a bar under one letter. The bar doubles it, so n becomes nn.' },
+    { id: 'fern', group: 'Fern', order: 4, elv: 'Elyë ná maihanda hína.', en: 'You are a very smart kid.', key: 2, keyEn: 'smart',
+      art: '🧒🧩⭐', artLabel: 'A child with a finished puzzle and a gold star',
+      pron: ['EL-yeh', 'nah', 'my-HAN-da', 'HEE-na'],
+      heard: [['ná', 'is, are'], ['hína', 'child, kid'], ['handa', 'smart'], ['mai-', 'very, extra well']],
+      story: ['Mia finished the hardest puzzle in her class.', 'Her teacher smiled and said, “Well done!”'],
+      parts: [['mai-', 'very, extra well'], ['handa', 'smart']],
+      fits: 'First comes who (you). Then is. Then what kind of kid (very smart). The last word is the kid.',
+      lesson: 'The long mark in the last word sits on a tall letter. Long vowels sit on a long carrier.' },
+    { id: 'sun', group: 'Sun', order: 2, elv: 'I parmasan harya vinyë parmar.', en: 'The library has new books.', key: 4, keyEn: 'books',
+      art: '📚🏛️🆕', artLabel: 'A library full of new books',
+      pron: ['ee', 'PAR-ma-san', 'HAR-ya', 'VIN-yeh', 'PAR-mar'],
+      heard: [['i', 'the'], ['parma', 'book'], ['harya', 'has, holds'], ['vinyë', 'new']],
+      story: ['On Monday morning, the librarian unlocks the doors.', 'Every shelf smells like fresh paper.'],
+      parts: [['parma', 'book'], ['parmasan', 'a place for books']],
+      fits: 'The first two words say the place. Then comes has. Then new. The last word is the thing it has.',
+      lesson: 'The first word is a short stroke with a dot on top. A vowel with no letter before it sits on a short carrier. The dot means i.' },
+    { id: 'star', group: 'Star', order: 5, elv: 'Rië tyalin tyalië alassen.', en: 'I only play games for fun.', key: 3, keyEn: 'fun',
+      art: '🎮⚽😄', artLabel: 'A game controller, a ball and a smiling face',
+      pron: ['REE-eh', 'TYA-lin', 'TYA-li-eh', 'a-LAS-sen'],
+      heard: [['rië', 'only'], ['tyal-', 'play'], ['tyalië', 'game, play'], ['alassë', 'joy, fun']],
+      story: ['At recess, Sam races out to the yard.', 'No homework, no rules, just a game. It is the best part of the day!'],
+      parts: [['-n', 'for, to'], ['-in', 'I']],
+      fits: 'The first word says only. The second says what I do (play). The third is the games. The last says why (for fun).',
+      lesson: 'Look at the second letter in the last word. Two letters here sound like ss. The letter is turned over so a vowel mark can sit on it.' }
   ];
   const byId = Object.fromEntries(FRAGS.map(f => [f.id, f]));
-  const CROSSED = [['i', 'the', 'River, Moon, Oak'], ['anna', 'gift', 'Moon, Oak'], ['ando', 'gate (andonna, andossë)', 'Oak, Fern'], ['essë', 'name (essërya)', 'Fern, Star'], ['á', 'command', 'Oak, Fern, Star'], ['-ssë', 'at, in', 'River, Fern'], ['-rya', 'its', 'Fern, Star']];
+  // The secret phrase the class builds from the five keywords, in the order of "order" above.
+  const FINAL_EN = 'Read books often. It’s smart and fun!';
   // The code you announce to the class (typed in any capitalization).
   const UNLOCK_CODE = 'unlock';
   const wordsOf = f => f.elv.split(' ').map(w => w.replace(/[.,!]/g, ''));
 
   // ---------- State ----------
-  const KEY = 'five-ways-in-v2';
+  const KEY = 'five-ways-in-v3';
   let S;
   try { S = JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { S = null; }
   if (!S || !S.groups) S = { group: null, groups: {}, board: { order: [], show: false, step: 1 } };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const gs = id => {
-    if (!S.groups[id]) S.groups[id] = { stage: 'look', first: '', open: [], helped: {}, clues: [], meaning: '', confidence: '', noticed: '', teacher: [], revealed: false };
+    if (!S.groups[id]) S.groups[id] = { stage: 'look', first: '', open: [], helped: {}, clues: [], meaning: '', keyword: '', noticed: '', teacher: [], revealed: false };
     return S.groups[id];
   };
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -443,13 +443,12 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       <section class="intro">
         ${rainbow}
         <p class="eyebrow">An Elvish reading challenge</p>
-        <h1>Five sentences. One lost passage.</h1>
-        <p>Your group will get one sentence of a passage in Quenya, one of Tolkien’s Elvish languages, written in Tengwar, his Elvish alphabet. Work out what it means. You’ll have five resources, each built on a different approach to reading instruction. When every group is ready, the class puts the whole passage back together.</p>
-   
+        <h1>Five sentences. One secret phrase.</h1>
+        <p>Your group gets one short sentence in Elvish. Work out what it means with four helpers, each built on a different way of teaching reading. Then every group shares its highlighted keyword, and together we unlock the secret phrase.</p>
         <p class="muted">Pick the group your facilitator gave you. One device per group.</p>
       </section>
       <div class="groups">
-        ${['oak', 'moon', 'fern', 'river', 'star'].map(id => { const f = byId[id]; return `
+        ${['oak', 'moon', 'fern', 'sun', 'star'].map(id => { const f = byId[id]; return `
           <button type="button" class="group-card" data-g="${id}">
             <span class="group-name">${f.group} group</span>
             <span class="preview" aria-hidden="true">${tw(twText(f.elv.split(' ').slice(0, 2).join(' ')))}</span>
@@ -459,7 +458,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
   }
 
   // ---------- Desk ----------
-  const STAGES = [['look', 'First look'], ['work', 'Five ways in'], ['done', 'Share']];
+  const STAGES = [['look', 'First look'], ['work', 'Four ways in'], ['done', 'Share']];
   function renderDesk() {
     const f = byId[S.group], st = gs(S.group);
     const idx = STAGES.findIndex(s => s[0] === st.stage);
@@ -480,7 +479,8 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     return parts.map((w, i) => {
       const clean = w.replace(/[.,!]/g, ''), p = /[.,!]$/.test(w) ? w.slice(-1) : '';
       const inner = `<span class="n">${i + 1}</span>${wordGlyphs(clean)}`;
-      const word = interactive ? `<button type="button" class="eword${selWord === i ? ' sel' : ''}" data-w="${i}" aria-label="Elvish word ${i + 1}">${inner}</button>` : `<span class="eword" style="cursor:default">${inner}</span>`;
+      const k = i === f.key ? ' key' : '';
+      const word = interactive ? `<button type="button" class="eword${k}${selWord === i ? ' sel' : ''}" data-w="${i}" aria-label="Elvish word ${i + 1}${i === f.key ? ', your keyword' : ''}">${inner}</button>` : `<span class="eword${k}" style="cursor:default">${inner}</span>`;
       return word + (p ? `<span class="epunct" aria-hidden="true">${tw(TWP[p])}</span>` : '');
     }).join('');
   }
@@ -488,11 +488,11 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
   function lookView(f, st) {
     return `<div class="col" style="max-width:50rem">
       <section class="card">
-        <div style="display:grid;gap:.35rem"><h3>Your sentence</h3><p class="muted">No help yet. Look closely. What do you notice? Any repeated letters, long or short words, punctuation?</p></div>
+        <div style="display:grid;gap:.35rem"><h3>Your sentence</h3><p class="muted">Look at it first, with no help. What do you notice?</p></div>
         <div class="elv-sentence">${sentenceHTML(f, false)}</div>
-        <p class="muted small">In Tengwar, a single dot marks a pause and two dots end a sentence.</p>
-        <label class="field" for="first">What do you notice?<textarea id="first" placeholder="Repeated letters, word lengths, punctuation, patterns…">${esc(st.first)}</textarea></label>
-        <div class="actions"><button type="button" class="primary" id="go">Open the five resources</button></div>
+        <p class="keynote">The yellow word is your keyword. Keep an eye on it.</p>
+        <label class="field" for="first">What do you notice?<textarea id="first" placeholder="Letters that repeat, short or long words…">${esc(st.first)}</textarea></label>
+        <div class="actions"><button type="button" class="primary" id="go">Open the four resources</button></div>
       </section>
     </div>`;
   }
@@ -508,15 +508,15 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 
   function supportBody(t, f, st) {
     if (t === 'wl') return `
-      <div class="art">${ART[f.art]}</div>
+      <div class="art"><div class="emoji-art" role="img" aria-label="${esc(f.artLabel)}">${f.art}</div></div>
       <p class="story">${esc(f.story[0])} ${inlineElv(f.elv)} ${esc(f.story[1])}</p>
-      <ul><li>What would make sense here, given the story and the picture?</li><li>What might the Elvish sentence be saying at this point in the story?</li><li>Read the whole story again with your idea in place. Does it still make sense?</li></ul>`;
+      <ul><li>What would make sense in this story?</li><li>What might the Elvish sentence say here?</li></ul>`;
     if (t === 'bl') {
       const log = st.teacher.map(x => `<div class="say">${x}</div>`).join('');
       return `<div class="teacher">
         <div class="say"><b>Teacher:</b> Tell me what you’ve noticed so far.</div>
         <label class="field small" for="noticed" style="font-weight:700">What we’ve noticed<textarea id="noticed" style="min-height:3rem">${esc(st.noticed)}</textarea></label>
-        <div class="say"><b>Teacher:</b> Where are you stuck right now?</div>
+        <div class="say"><b>Teacher:</b> Where are you stuck?</div>
         <div class="stuck">
           <button type="button" data-stuck="sound">Saying the words</button>
           <button type="button" data-stuck="meaning">What one word means</button>
@@ -527,30 +527,25 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       </div>`;
     }
     if (t === 'svr') return `
-      <p class="formula">Reading = Decoding × Language comprehension</p>
+      <p class="formula">Reading = Decoding × Understanding</p>
       <p class="panel-label">Decoding: how the words sound</p>
       <div class="pron">${wordsOf(f).map((w, i) => `<div><span class="small muted">${i + 1}</span>${inlineElv(w)}<b>${f.pron[i]}</b>${canSpeak ? `<button type="button" data-say="${esc(w)}">Hear it</button>` : ''}</div>`).join('')}</div>
-      <p class="panel-label">Language comprehension: words you’d know if you heard them</p>
+      <p class="panel-label">Understanding: words you’d know if you heard them</p>
       <dl>${f.heard.map(h => `<dt>“${esc(h[0])}”</dt><dd>${esc(h[1])}</dd>`).join('')}</dl>
-      <p class="small muted">You need both panels: match what you hear to what is written.</p>`;
-    if (t === 'avr') return `
-      <p class="small"><b>What elves here already know:</b> ${esc(f.background)}</p>
-      <p class="small"><b>Word parts and what they mean</b></p><ul>${f.parts.map(p => `<li><b>${esc(p[0])}</b>: ${esc(p[1])}</li>`).join('')}</ul>
-      <p class="small"><b>Check yourselves</b></p>
-      <ul><li>Does your idea fit every word, or are you ignoring one?</li><li>What do you know that the sentence doesn’t say?</li><li>Could a word part here also appear in another group’s sentence?</li></ul>`;
+      <p class="small muted">Use both: match what you hear to what is written.</p>`;
     if (t === 'sl') return `
-      <p class="small"><b>Lesson 1: letters.</b> Tengwar letters stand for consonants. Here is every letter in your sentence, with its Elvish name and sound.</p>
+      <p class="small"><b>Lesson 1: letters.</b> Each letter stands for a sound. These are the letters in your sentence.</p>
       ${soundChart(f)}
-      <p class="small"><b>Lesson 2: vowel marks.</b> Vowels are marks written <i>above the letter that comes before them</i>, shown here on example letters. A vowel with no letter before it sits on a carrier.</p>
+      <p class="small"><b>Lesson 2: vowel marks.</b> A vowel is a mark on the letter <i>before</i> it, shown here on example letters. A vowel with no letter before it sits on a carrier.</p>
       ${markChart(f)}
-      <p class="small muted">Point, say, blend, left to right. This lesson teaches how to say the words, not what they mean.</p>`;
+      <p class="small muted">Point, say, blend, left to right. This lesson is about how to say the words, not what they mean.</p>`;
     return '';
   }
 
   function resourcePanel(f, st) {
     const cur = st.tab;
-    const tabs = `<div class="tabs" role="tablist" aria-label="Five resources">${ORDER.map(t => `<button type="button" role="tab" class="tab" data-t="${t}" data-tab="${t}" aria-selected="${cur === t}">${T[t].name}${st.open.includes(t) ? '<span class="seen" aria-label="opened"> ✓</span>' : ''}</button>`).join('')}</div>`;
-    if (!cur) return `${tabs}<div class="sup-empty">Pick a resource to open it. Use them in any order, as you need them. Notice what each one helps you do.</div>`;
+    const tabs = `<div class="tabs" role="tablist" aria-label="Four resources">${ORDER.map(t => `<button type="button" role="tab" class="tab" data-t="${t}" data-tab="${t}" aria-selected="${cur === t}">${T[t].name}${st.open.includes(t) ? '<span class="seen" aria-label="opened"> ✓</span>' : ''}</button>`).join('')}</div>`;
+    if (!cur) return `${tabs}<div class="sup-empty">Pick a resource to open it. Use them in any order.</div>`;
     const helped = st.helped[cur] || [];
     return `${tabs}<section class="sup open" data-t="${cur}" role="tabpanel">
       <div class="sup-head"><div class="sup-title"><b>${T[cur].name}</b><span>${T[cur].short}</span><span class="helped-line" id="helped-line">✓ Opened${helped.length ? ' · Helped us: ' + helped.map(k => HELPED[k]).join(' · ') : ''}</span></div></div>
@@ -566,32 +561,42 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <section class="card">
           <p class="eyebrow">Your Elvish sentence</p>
           <div class="elv-sentence" id="sentence">${sentenceHTML(f, true)}</div>
+          <p class="keynote">The yellow word is your keyword.</p>
+        </section>
+        <section class="todo">
+          <b>What to do</b>
+          <ol>
+            <li>Open each of the four resources. Use them in any order.</li>
+            <li>Write what you think your sentence means.</li>
+            <li>Write what you think your keyword means.</li>
+            <li>Be ready to tell the class which resource helped most.</li>
+          </ol>
         </section>
         <section class="card">
-          <label class="field" for="meaning">Our current interpretation <span class="muted small" style="font-weight:400">Revise it as you try each resource. It doesn’t need to be word for word.</span><textarea id="meaning" style="min-height:4.5rem">${esc(st.meaning)}</textarea></label>
-          <fieldset><legend>Confidence</legend><div class="conf">${['Low', 'Medium', 'High'].map(c => `<label class="opt"><input type="radio" name="confidence" id="conf-${c}" value="${c}" ${st.confidence === c ? 'checked' : ''}><span>${c}</span></label>`).join('')}</div></fieldset>
+          <label class="field" for="meaning">What we think our sentence means <span class="muted small" style="font-weight:400">It’s okay to change it as you go.</span><textarea id="meaning" style="min-height:4.5rem">${esc(st.meaning)}</textarea></label>
+          <label class="field" for="keyword">What we think our keyword means<input type="text" id="keyword" value="${esc(st.keyword)}" placeholder="One word is fine"></label>
         </section>
         <details class="card clue-box" id="notebook" ${st.notesOpen || st.clues.length ? 'open' : ''}>
           <summary>Clue notebook <span class="muted small" style="font-weight:400">(optional${st.clues.length ? ` · ${st.clues.length} clue${st.clues.length > 1 ? 's' : ''}` : ''})</span></summary>
-          <p class="muted small">Tap a word above, then note what you think it, or part of it, means.</p>
+          <p class="muted small">Tap a word above, then write what you think it means.</p>
           <div class="clues" id="clues">${st.clues.map((c, i) => `<div class="clue"><b>${esc(c.el)}</b><span>→ ${esc(c.means)}</span><button type="button" data-del="${i}" aria-label="Remove clue">Remove</button></div>`).join('')}</div>
           <div class="add-clue">
-            <label for="clue-el">Word or part<input type="text" id="clue-el" placeholder="e.g. word 2"></label>
+            <label for="clue-el">Word<input type="text" id="clue-el" placeholder="e.g. word 2"></label>
             <label for="clue-means">We think it means<input type="text" id="clue-means" placeholder="e.g. maybe “door”"></label>
             <button type="button" id="add-clue">+ Add clue</button>
           </div>
         </details>
-        <p class="nudge" id="nudge" role="status" hidden>Add your best interpretation—or describe what you’re still unsure about.</p>
+        <p class="nudge" id="nudge" role="status" hidden>Add your best guess first. It’s okay if you’re not sure.</p>
         <div class="actions"><button type="button" class="primary" id="finish">We’re ready to share</button></div>
       </div>
-      <aside class="col res" aria-label="Five resources" id="res">
-        <h3>Five ways in</h3>
+      <aside class="col res" aria-label="Four resources" id="res">
+        <h3>Four ways in</h3>
         ${resourcePanel(f, st)}
       </aside>
     </div>`;
   }
 
-  const ordinal = n => ['First', 'Second', 'Third', 'Fourth', 'Fifth'][n - 1] || n;
+  const ordinal = n => ['First', 'Second', 'Third', 'Fourth'][n - 1] || n;
   function doneView(f, st) {
     return `<div class="col" style="max-width:54rem">
       <section class="card">
@@ -600,8 +605,8 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <div class="table-wrap"><table><tbody>
           <tr><th scope="row">What we noticed first</th><td>${st.first ? esc(st.first) : '<span class="muted">—</span>'}</td></tr>
           <tr><th scope="row">What we think it means</th><td><b>${st.meaning ? esc(st.meaning) : '—'}</b></td></tr>
-          <tr><th scope="row">Confidence</th><td>${st.confidence || '—'}</td></tr>
-          <tr><th scope="row">Clues</th><td>${st.clues.length ? st.clues.map(c => `<span class="pill tag">${esc(c.el)} → ${esc(c.means)}</span>`).join('') : '<span class="muted">—</span>'}</td></tr>
+          <tr><th scope="row">Our keyword</th><td><b>${st.keyword ? esc(st.keyword) : '—'}</b></td></tr>
+          ${st.clues.length ? `<tr><th scope="row">Clues</th><td>${st.clues.map(c => `<span class="pill tag">${esc(c.el)} → ${esc(c.means)}</span>`).join('')}</td></tr>` : ''}
         </tbody></table></div>
       </section>
       <section class="card">
@@ -611,11 +616,15 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <tbody>${ORDER.map(t => { const o = st.open.indexOf(t); const h = st.helped[t] || []; return `<tr><td class="t"><b style="color:var(--${t})">${T[t].name}</b></td><td>${o < 0 ? '<span class="muted">Not opened</span>' : ordinal(o + 1)}</td><td>${h.length ? h.map(k => `<span class="pill tag">${HELPED[k]}</span>`).join('') : '<span class="muted">—</span>'}</td></tr>`; }).join('')}</tbody>
         </table></div>
       </section>
+      <section class="card ready">
+        <h3>Get ready for the discussion</h3>
+        <ul><li>Which resource helped you the most?</li><li>Which one helped the least?</li><li>What did you still need after using them?</li></ul>
+      </section>
       <section class="card">
         ${st.revealed ? `<p class="eyebrow">Our sentence means</p><p class="revealed">${esc(f.en)}</p>
-          <p class="muted">How close did you get? Which resources helped, and what was still missing?</p>`
+          <p class="muted">How close did you get? Which resources helped?</p>`
         : `<h3>Unlock the translation</h3>
-          <p class="muted">Share your interpretation first. Your facilitator will give everyone the unlock code.</p>
+          <p class="muted">Share your guess first. Your facilitator will give everyone the unlock code.</p>
           <div class="unlock"><label for="code" class="sr-only">Unlock code</label><input type="text" id="code" autocomplete="off" placeholder="Unlock code"><button type="button" class="primary" id="unlock">Unlock</button></div>
           <p class="submit-status err" id="code-msg" role="status" aria-live="polite"></p>`}
         <div class="actions"><button type="button" id="back">Back to the resources</button><button type="button" id="restart">Start over</button></div>
@@ -643,7 +652,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       selWord = i;
       app.querySelectorAll('#sentence .eword').forEach(x => x.classList.toggle('sel', Number(x.dataset.w) === i));
       const nbk = document.getElementById('notebook'); if (nbk && !nbk.open) { nbk.open = true; st.notesOpen = true; save(); }
-      const el = document.getElementById('clue-el'); el.value = `word ${i + 1}`; document.getElementById('clue-means').focus();
+      const el = document.getElementById('clue-el'); if (el) { el.value = `word ${i + 1}`; document.getElementById('clue-means').focus(); }
     }));
     const add = document.getElementById('add-clue');
     if (add) add.addEventListener('click', () => {
@@ -653,7 +662,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     });
     app.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => { st.clues.splice(Number(b.dataset.del), 1); save(); renderDesk(); }));
     const m = document.getElementById('meaning'); if (m) m.addEventListener('input', e => { st.meaning = e.target.value; save(); });
-    app.querySelectorAll('input[name=confidence]').forEach(r => r.addEventListener('change', () => { st.confidence = r.value; save(); }));
+    const kw = document.getElementById('keyword'); if (kw) kw.addEventListener('input', e => { st.keyword = e.target.value; save(); });
     const nt = document.getElementById('noticed'); if (nt) nt.addEventListener('input', e => { st.noticed = e.target.value; save(); });
     app.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.tab; st.tab = t; if (!st.open.includes(t)) st.open.push(t); save(); renderDesk(); scrollToCard(t);
@@ -677,7 +686,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     const nb = document.getElementById('notebook'); if (nb) nb.addEventListener('toggle', () => { st.notesOpen = nb.open; save(); });
     const fin = document.getElementById('finish'); if (fin) fin.addEventListener('click', () => {
       const nudge = document.getElementById('nudge');
-      if ((!st.meaning.trim() || !st.confidence) && nudge.hidden) { nudge.hidden = false; fin.textContent = 'Continue anyway'; return; }
+      if (!st.meaning.trim() && nudge.hidden) { nudge.hidden = false; fin.textContent = 'Continue anyway'; return; }
       st.stage = 'done'; save(); renderDesk(); window.scrollTo(0, 0); });
     const unlock = document.getElementById('unlock');
     if (unlock) {
@@ -720,43 +729,41 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     const B = S.board; if (!B.step) B.step = 1;
     const full = B.order.length === 5;
     const correct = full && B.order.every((id, i) => byId[id].order === i + 1);
-    const pile = ['oak', 'moon', 'fern', 'river', 'star'];
-    const line = f => `<span class="glyphline" aria-hidden="true">${tw(TW[f.id].tw)}</span>`;
+    const pile = ['oak', 'moon', 'fern', 'sun', 'star'];
+    const line = f => `<span class="glyphline" aria-hidden="true">${wordGlyphs(wordsOf(f)[f.key])}</span>`;
     app.innerHTML = `
       <section class="intro">
         ${rainbow}
         <p class="eyebrow">Class board · shared screen</p>
-        <h1>Put the passage back together.</h1>
+        <h1>Unlock the secret phrase.</h1>
         <p class="nudge"><b>Your group’s answers stay on your own computer or phone. They don’t show up on this shared screen, so each group shares aloud.</b></p>
-        <p>Each group reads what it thinks its sentence means, and shares any clues. Then decide the order as a class. Tap a sentence to place it; tap a slot to send it back.</p>
-        <label class="opt" style="width:fit-content"><input type="checkbox" id="show" ${B.show ? 'checked' : ''}><span>Show the English meanings</span></label>
+        <p>Each group shares its keyword and what it thinks it means. Then decide the order together. Tap a keyword to place it. Tap a slot to send it back.</p>
+        <label class="opt" style="width:fit-content"><input type="checkbox" id="show" ${B.show ? 'checked' : ''}><span>Show the English keywords</span></label>
       </section>
       <div class="board">
         <section class="card">
-          <div class="stage-title"><span class="num">1</span><h2>Rebuild the passage</h2></div>
+          <div class="stage-title"><span class="num">1</span><h2>Put the keywords in order</h2></div>
           <div class="slots">${[0, 1, 2, 3, 4].map(i => { const id = B.order[i]; return id
-            ? `<button type="button" class="slot filled" data-slot="${i}"><span class="n">Sentence ${i + 1}</span><span style="font-family:var(--f-display);font-weight:600;color:var(--brand)">${byId[id].group}</span>${B.show ? `<span class="small">${esc(byId[id].en)}</span>` : ''}</button>`
-            : `<div class="slot"><span class="n">Sentence ${i + 1}</span></div>`; }).join('')}</div>
-          <div class="pile">${pile.map(id => { const f = byId[id]; return `<button type="button" class="frag" data-frag="${id}" ${B.order.includes(id) ? 'disabled' : ''}><span class="gname">${f.group} group</span>${line(f)}${B.show ? `<span class="small">${esc(f.en)}</span>` : ''}</button>`; }).join('')}</div>
+            ? `<button type="button" class="slot filled" data-slot="${i}"><span class="n">Word ${i + 1}</span><span style="font-family:var(--f-display);font-weight:600;color:var(--brand)">${byId[id].group}</span>${B.show ? `<span class="small">${esc(byId[id].keyEn)}</span>` : ''}</button>`
+            : `<div class="slot"><span class="n">Word ${i + 1}</span></div>`; }).join('')}</div>
+          <div class="pile">${pile.map(id => { const f = byId[id]; return `<button type="button" class="frag" data-frag="${id}" ${B.order.includes(id) ? 'disabled' : ''}><span class="gname">${f.group} group</span>${line(f)}${B.show ? `<span class="small">${esc(f.keyEn)}</span>` : ''}</button>`; }).join('')}</div>
           ${full ? (correct
-            ? `<div class="result ok"><p class="eyebrow">Passage recovered</p>
-                <p class="passage">${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => esc(f.en)).join(' ')}</p>
-                <p class="small" style="font-style:italic">${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => esc(f.elv)).join(' ')}</p>
-                <p><b>Words that crossed sentences.</b> No group had the whole passage. These shared words and word parts helped connect the fragments:</p>
-                <div class="crossed">${CROSSED.map(c => `<div><b>${esc(c[0])}</b> “${esc(c[1])}” · ${c[2]}</div>`).join('')}</div></div>`
-            : `<div class="result no"><p><b>Not quite.</b> Listen for connections. Which sentences share a word? Which sentence asks for something another one gives?</p></div>`) : ''}
+            ? `<div class="result ok"><p class="eyebrow">Secret phrase unlocked</p>
+                <p class="passage">${esc(FINAL_EN)}</p>
+                <div class="crossed">${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => `<div><b>${f.group}</b> · ${esc(f.keyEn)}<br><span class="small muted">${esc(f.en)}</span></div>`).join('')}</div></div>`
+            : `<div class="result no"><p><b>Not quite.</b> Say the keywords out loud. Which ones sound like they go together?</p></div>`) : ''}
           <div class="actions"><button type="button" id="clear">Clear the slots</button></div>
         </section>
 
         <section class="card">
-          <div class="stage-title"><span class="num">2</span><h2>What helped, and with what?</h2></div>
+          <div class="stage-title"><span class="num">2</span><h2>Let’s talk about it</h2></div>
           <p class="muted">Each group shares its “what each resource helped you do” screen.</p>
           <ol class="qs">
-            <li>Which resources helped you <b>say the words</b>?</li>
-            <li>Which helped you <b>make meaning</b>, understanding and going beyond the words?</li>
-            <li>What did each resource help you do, and what remained unresolved?</li>
-            <li>What happened when you combined them? Which did you open first, and why?</li>
-            <li>Which words or word parts did you recognize from another group’s sentence?</li>
+            <li>What did you think about that activity?</li>
+            <li>Which of the four approaches was the most helpful?</li>
+            <li>How do the four approaches compare to one another?</li>
+            <li>Which of the four approaches do you think we use in North Carolina?</li>
+            <li>Were you motivated to decode your sentences? Why?</li>
           </ol>
           <div class="theory-row">${ORDER.map(t => `<div class="theory-chip" data-t="${t}"><b>${T[t].name}</b><span>${T[t].short} (Thomas, 2022, ${T[t].page})</span></div>`).join('')}</div>
         </section>
@@ -764,8 +771,9 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         <section class="card">
           <div class="stage-title"><span class="num">3</span><h2>From Elvish to North Carolina</h2></div>
           ${B.step < 3 ? `<div class="reveal-gate"><p class="muted">Open this after the discussion.</p><button type="button" class="primary" id="next">Connect it to NC</button></div>` : `
-          <div class="fact"><p>North Carolina’s Excellent Public Schools Act of 2021 defines the Science of Reading as covering language, phonological and phonemic awareness, phonics and spelling, fluency, vocabulary, oral language and comprehension.</p><p class="src">North Carolina General Assembly, 2021, Part II (G.S. 115C-83.3(7a))</p><p class="q">Which of today’s five resources does that definition draw on? Which does it leave out?</p></div>
+          <div class="fact"><p>North Carolina’s Excellent Public Schools Act of 2021 defines the Science of Reading as covering language, phonological and phonemic awareness, phonics and spelling, fluency, vocabulary, oral language and comprehension.</p><p class="src">North Carolina General Assembly, 2021, Part II (G.S. 115C-83.3(7a))</p><p class="q">Which of today’s four resources does that definition draw on? Which does it leave out?</p></div>
           <div class="fact"><p>To carry out the law, the state trained every K–5 teacher in LETRS. Rowe and Thrailkill, who completed the training, argue it focused mainly on phonemic awareness, phonics and spelling, with thinner treatment of vocabulary, comprehension and writing.</p><p class="src">Rowe & Thrailkill, 2025, pp. 4, 11</p><p class="q">If your group had only one of today’s resources, which would you have chosen, and what would you have missed?</p></div>
+          <div class="fact"><p>There was also a fifth way in that we didn’t give you: motivation. The Active View of Reading adds motivation and engagement to the Simple View.</p><p class="src">Thomas, 2022, p. 11</p><p class="q">What kept you going today? What would have made you want to stop?</p></div>
           <div class="fact"><p>Thomas argues that the reading debate keeps swinging between approaches, and that no single theory should be treated as the whole answer.</p><p class="src">Thomas, 2022</p><p class="q">After today, where do you agree or disagree? What should a reading policy guarantee in every classroom, and where should teachers decide?</p></div>`}
         </section>
       </div>`;
@@ -786,32 +794,35 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     app.innerHTML = `
       <div class="guide">
         <section>${rainbow}<p class="eyebrow">Facilitator guide</p><h1>Running Five Ways In</h1>
-          <p>Five groups each get one sentence of a short passage in Quenya, one of J.R.R. Tolkien’s Elvish languages, written in Tengwar in the Classical Quenya mode. Every word is attested in Eldamo, the scholarly lexicon of Tolkien’s languages, and some words and endings appear in more than one sentence. Every group has the same five resources, each designed around one of the theories of reading described by Thomas (2022, pp. 10–11). Groups work toward an interpretation of their whole sentence, then the class rebuilds the passage and discusses what each resource helped them do.</p></section>
+          <p>Five groups each get one short sentence in Quenya, one of J.R.R. Tolkien’s Elvish languages, written in Tengwar. Every group has the same four resources, each built on a theory of reading from Thomas (2022, pp. 10–11). Groups work out what their sentence means and what their highlighted keyword means. Then the class puts the five keywords in order to unlock a secret phrase. The activity takes about 10 minutes.</p></section>
         <section><h2>Setup</h2><ol>
-          <li>Split the room into five groups: Oak, Moon, Fern, River and Star.</li>
+          <li>Split the room into five groups: Oak, Moon, Fern, Sun and Star, with one facilitator per group.</li>
           <li>One device per group opens this page and picks its group on the Group desk.</li>
           <li>Put the Class board on the shared screen.</li></ol>
           <p class="muted">Nothing is sent anywhere. Each device keeps its own progress.</p></section>
         <section><h2>Flow</h2>
           <div class="row"><b>First look</b><span>Groups see their sentence with no help and write what they notice.</span></div>
-          <div class="row"><b>Five ways in</b><span>Groups open resources in any order, note optional clues, and tag what each resource helped them do. Their main task is an interpretation of the whole sentence, with a confidence rating.</span></div>
-          <div class="row"><b>Share</b><span>Groups share their interpretation and resource reflections aloud. Then announce the unlock code, <b>unlock</b>, so every group sees its translation at once. Reflect on how close they got, then rebuild the passage together.</span></div>
-          <div class="row"><b>Class board</b><span>Rebuild the passage, see which words crossed sentences, discuss, then connect to NC.</span></div>
-          <p class="muted small">Timing depends on your slot. Roughly: first look 2 min, resources 10 min, rebuild 3 min, discussion 5–10 min.</p></section>
+          <div class="row"><b>Four ways in</b><span>Groups open the resources in any order, write what they think the sentence and the keyword mean, and tag what each resource helped them do.</span></div>
+          <div class="row"><b>Share</b><span>Groups get ready to share. Announce the unlock code, <b>unlock</b>, so every group sees its translation at once.</span></div>
+          <div class="row"><b>Class board</b><span>Groups share their keywords. The class puts them in order to unlock the secret phrase, then talks through the five discussion questions and connects to NC.</span></div>
+          <p class="muted small">Facilitators sit with their group and help them reflect as they go. They do not solve it for them.</p></section>
         <section><h2>How each resource reflects its theory</h2>
           <div class="row"><b style="color:var(--wl)">Whole Language</b><span>An illustrated scene and the sentence set inside a short story, so meaning comes from the whole text and context.</span></div>
-          <div class="row"><b style="color:var(--bl)">Balanced Literacy</b><span>A teacher check-in: the group says what it has noticed and where it is stuck, and the teacher responds to that need with a mini-lesson, a word meaning, a structure hint, or a starting point.</span></div>
-          <div class="row"><b style="color:var(--svr)">Simple View of Reading</b><span>Two panels that only work together: decoding (how each word sounds) and language comprehension (what words mean when heard).</span></div>
-          <div class="row"><b style="color:var(--avr)">Active View of Reading</b><span>Background knowledge, the meanings of word parts, and self-monitoring prompts, reflecting its additions to the Simple View.</span></div>
+          <div class="row"><b style="color:var(--bl)">Balanced Literacy</b><span>A teacher check-in: the group says what it has noticed and where it is stuck, and the teacher responds with a mini-lesson, a word meaning, a structure hint, or a starting point.</span></div>
+          <div class="row"><b style="color:var(--svr)">Simple View of Reading</b><span>Two panels that only work together: decoding (how each word sounds) and understanding (what words mean when heard).</span></div>
           <div class="row"><b style="color:var(--sl)">Structured Literacy</b><span>Explicit, sequenced lessons on the Tengwar letters (with their Elvish names) and the vowel marks. It teaches how to say words, not what they mean.</span></div>
-          <p class="cite">Theory descriptions follow Thomas (2022, pp. 10–11). Each resource is a simplified classroom analog, not a full version of the approach.</p></section>
-        <section><h2>The passage (answer key)</h2>
-          ${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => `<div class="row"><b>${f.order}. ${f.group}</b><span><i>${esc(f.elv)}</i><br>${esc(f.en)}</span></div>`).join('')}</section>
+          <p class="cite">Theory descriptions follow Thomas (2022, pp. 10–11). Each resource is a simplified classroom analog, not a full version of the approach. The Active View of Reading is the fifth, unmentioned approach. Bring it in at the debrief through motivation.</p></section>
+        <section><h2>Answer key</h2>
+          ${FRAGS.slice().sort((a, b) => a.order - b.order).map(f => `<div class="row"><b>${f.order}. ${f.group}</b><span><i>${esc(f.elv)}</i><br>${esc(f.en)}<br><b>Keyword:</b> ${esc(f.keyEn)}</span></div>`).join('')}
+          <div class="row"><b>Secret phrase</b><span>${esc(FINAL_EN)}</span></div>
+          <p class="muted small">For discussion question 4 (which approach does NC use?): the Simple View of Reading, with a heavy emphasis on Structured Literacy.</p></section>
+        <section><h2>Notes on the Elvish</h2>
+          <p class="small">Each sentence is a Quenya rendering built from words in Eldamo, the lexicon of Tolkien’s languages. Some words are modern reconstructions or compounds, not words Tolkien wrote: rillumë (“many times”), parmasan (“library”), and mancacoa (manca “trade” + coa “house”, for “store”). In the Tengwar spelling, a vowel is written above the letter before it. A letter n before another consonant is written as its own letter.</p></section>
         <section><h2>Framing</h2><p>Let groups discover the pattern. Avoid telling them in advance which resource does what. This is a hypothetical illustration, not evidence about which approach works best.</p></section>
         <section><h2>Sources on the board</h2><ul class="cite">
           <li>North Carolina General Assembly. (2021). <i>Excellent Public Schools Act of 2021</i>, S.L. 2021-8.</li>
           <li>Rowe, M. W., & Thrailkill, L. D. (2025). A view from within. <i>Education Policy Analysis Archives, 33</i>(82).</li>
-          <li>Strack, P. (n.d.). <i>Eldamo: An Elvish lexicon</i>. https://eldamo.org (source for every Quenya word).</li>
+          <li>Strack, P. (n.d.). <i>Eldamo: An Elvish lexicon</i>. https://eldamo.org (source for the Quenya words).</li>
           <li>Björkman, M. (n.d.). <i>Amanye Tenceli: The Classical mode</i>. (Tengwar spelling rules.)</li>
           <li>Omagari, T. (2022). <i>Alcarin Tengwar</i> [Typeface]. SIL Open Font License.</li>
           <li>Thomas, P. L. (2022). <i>The science of reading movement</i>. National Education Policy Center.</li></ul></section>
