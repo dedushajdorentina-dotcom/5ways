@@ -322,6 +322,43 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
 .phraseline { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem .8rem; }
 .phraseline .slot { flex: 0 0 auto; min-width: 8.5rem; }
 .connector { font-family: var(--f-display); font-size: 1.5rem; font-weight: 600; color: var(--ink); }
+
+/* Bigger "Four ways in" panel (showstopper feedback) */
+.wrap { max-width: 84rem; }
+@media (min-width: 54.01rem) { .desk { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.5rem; } }
+.res { font-size: 1.15rem; }
+.res > h3 { font-size: 1.6rem; }
+.res .tab { font-size: 1.05rem; padding: .5rem 1rem; }
+.res .sup-title b { font-size: 1.45rem; }
+.res .sup-title span, .res .helped-line { font-size: 1.05rem; }
+.res .sup-body { padding: 1.2rem; gap: .9rem; }
+.res .small, .res .story, .res .sup-body ul, .res .sup-body ol, .res dd, .res .note, .res .pattern, .res .teacher .say, .res .sound div, .res .chip, .res .formula, .res .sup-empty { font-size: 1.1rem; }
+.res .helped p { font-size: 1.1rem; }
+.res .inline-elv .tw { font-size: 1.7rem; }
+.res .sound .tw { font-size: 2.1rem; }
+.res .emoji-art { font-size: 3.8rem; }
+
+/* About this approach */
+.res .about { border: 2px solid var(--c); border-radius: 12px; padding: .7rem .9rem; background: var(--surface); display: grid; gap: .5rem; font-size: 1.02rem; }
+.res .about summary { cursor: pointer; font-weight: 800; color: var(--c); }
+.res .about p { margin: 0; }
+.res .about .cite-line { font-size: .9rem; color: var(--muted); font-style: italic; }
+
+/* Two-step checklist + share gate */
+.todo .steps-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+#left ul { margin: .3rem 0 0; padding-left: 1.2rem; }
+#left[hidden] { display: none; }
+
+/* Phone: show Step 1 (approaches) before Step 2 (answers) */
+@media (max-width: 54rem) {
+  .desk.work > .col:first-child { display: contents; }
+  .desk.work > .col:first-child > :nth-child(1) { order: 1; }
+  .desk.work > .col:first-child > :nth-child(2) { order: 2; }
+  .desk.work > .res { order: 3; }
+  .desk.work > .col:first-child > :nth-child(3) { order: 4; }
+  .desk.work > .col:first-child > :nth-child(4) { order: 5; }
+  .desk.work > .col:first-child > :nth-child(5) { order: 6; }
+}
 </style>
 </head>
 <body>
@@ -472,7 +509,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     app.innerHTML = `
       <div class="desk-head">
         <div style="display:grid;gap:.3rem"><p class="eyebrow">Your group</p><h2>${f.group} group</h2></div>
-        <ol class="steps" aria-label="Progress">${STAGES.map((s, i) => `<li class="${i === idx ? 'on' : i < idx ? 'done' : ''}">${i + 1}. ${s[1]}</li>`).join('')}</ol>
+        <ol class="steps" aria-label="Progress">${STAGES.map((s, i) => `<li class="${i === idx ? 'on' : i < idx ? 'done' : ''}">${s[1]}</li>`).join('')}</ol>
       </div>
       ${body}
       <p style="margin-top:2rem" class="muted">Wrong group? <button type="button" class="link" id="switch">Choose a different group</button></p>`;
@@ -509,7 +546,9 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
   }
   function markChart(f) {
     const d = TW[f.id];
-    return `<div class="sound">${d.marks.map(m => `<div>${tw(m.c)}<span><b>${m.say}</b> · ${m.name}</span></div>`).join('')}</div>`;
+    const plain = { 'three dots above': 'three dots on top', 'acute above': 'a small slanted line on top', 'dot above': 'one dot on top', 'right curl above': 'a curl on top, opening right', 'left curl above': 'a curl on top, opening left', 'two dots below': 'two dots underneath', 'bar below': 'a line underneath' };
+    const sayPlain = x => x.startsWith('y after') ? 'y' : x.startsWith('doubles') ? 'double letter' : x;
+    return `<div class="sound">${d.marks.map(m => { const k = m.name.replace(/ \(.*$/, ''); return `<div>${tw(m.c)}<span><b>${sayPlain(m.say)}</b> = ${plain[k] || k}</span></div>`; }).join('')}</div>`;
   }
 
   function supportBody(t, f, st) {
@@ -520,8 +559,6 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     if (t === 'bl') {
       const log = st.teacher.map(x => `<div class="say">${x}</div>`).join('');
       return `<div class="teacher">
-        <div class="say"><b>Teacher:</b> Tell me what you’ve noticed so far.</div>
-        <label class="field small" for="noticed" style="font-weight:700">What we’ve noticed<textarea id="noticed" style="min-height:3rem">${esc(st.noticed)}</textarea></label>
         <div class="say"><b>Teacher:</b> Where are you stuck?</div>
         <div class="stuck">
           <button type="button" data-stuck="sound">Saying the words</button>
@@ -540,29 +577,55 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       <dl>${f.heard.map(h => `<dt>“${esc(h[0])}”</dt><dd>${esc(h[1])}</dd>`).join('')}</dl>
       <p class="small muted">Use both: match what you hear to what is written.</p>`;
     if (t === 'sl') return `
-      <p class="small"><b>Lesson 1: letters.</b> Each letter stands for a sound. These are the letters in your sentence.</p>
+      <p class="small"><b>Lesson 1: letters.</b> Each Elvish letter makes one sound. Here are the letters in your sentence.</p>
       ${soundChart(f)}
-      <p class="small"><b>Lesson 2: vowel marks.</b> A vowel is a mark on the letter <i>before</i> it, shown here on example letters. A vowel with no letter before it sits on a carrier.</p>
+      <p class="small"><b>Lesson 2: vowels.</b> Vowels are small marks on top of a letter. Say the letter first, then the vowel.</p>
       ${markChart(f)}
-      <p class="small muted">Point, say, blend, left to right. This lesson is about how to say the words, not what they mean.</p>`;
+      <p class="small muted">Point to each letter, say its sound, and blend them left to right. This helps you say the words, not know what they mean.</p>`;
     return '';
   }
 
+  const ABOUT = {
+    wl: { what: 'Children learn to read much as they learn to talk, through real, meaningful texts. Readers figure out words from meaning, grammar and letter cues.', cite: 'Goodman, 1967' },
+    bl: { what: 'Mixes parts of whole language (like guided and independent reading) with some phonics. It has no single definition and relies heavily on teacher judgment.', cite: 'Loewus, 2019; Schwartz, 2022' },
+    svr: { what: 'Reading comprehension = decoding × language comprehension. If either one is zero, comprehension is zero.', cite: 'Gough & Tunmer, 1986; Hoover & Gough, 1990' },
+    sl: { what: 'Explicit, systematic, step-by-step teaching of sounds, letters, spelling patterns and word parts, along with vocabulary and comprehension. The International Dyslexia Association coined the term.', cite: 'International Dyslexia Association, 2019' }
+  };
   function resourcePanel(f, st) {
     const cur = st.tab;
     const tabs = `<div class="tabs" role="tablist" aria-label="Four resources">${ORDER.map(t => `<button type="button" role="tab" class="tab" data-t="${t}" data-tab="${t}" aria-selected="${cur === t}">${T[t].name}${st.open.includes(t) ? '<span class="seen" aria-label="opened"> ✓</span>' : ''}</button>`).join('')}</div>`;
-    if (!cur) return `${tabs}<div class="sup-empty">Pick a resource to open it. Use them in any order.</div>`;
+    if (!cur) return `${tabs}<div class="sup-empty">Pick an approach above to open it.</div>`;
     const helped = st.helped[cur] || [];
     return `${tabs}<section class="sup open" data-t="${cur}" role="tabpanel">
       <div class="sup-head"><div class="sup-title"><b>${T[cur].name}</b><span>${T[cur].short}</span><span class="helped-line" id="helped-line">✓ Opened${helped.length ? ' · Helped us: ' + helped.map(k => HELPED[k]).join(' · ') : ''}</span></div></div>
-      <div class="sup-body">${supportBody(cur, f, st)}
+      <div class="sup-body">${ABOUT[cur] ? `<details class="about" open><summary>About this approach</summary><p><b>What it is:</b> ${ABOUT[cur].what}</p><p class="cite-line">${ABOUT[cur].cite}</p></details>` : ''}${supportBody(cur, f, st)}
         <div class="helped"><p>This helped us…</p><div class="chips">${HELPED.map((h, k) => `<button type="button" class="chip" data-help="${cur}" data-k="${k}" aria-pressed="${helped.includes(k)}">${h}</button>`).join('')}</div></div>
       </div>
     </section>`;
   }
 
+  function leftToDo(st) {
+    const left = [];
+    const notOpen = ORDER.filter(t => !st.open.includes(t));
+    const noTap = ORDER.filter(t => st.open.includes(t) && !(st.helped[t] || []).length);
+    if (notOpen.length) left.push('Step 1: Open ' + notOpen.map(t => T[t].name).join(', '));
+    if (!(st.meaning || '').trim()) left.push('Step 2: Write what your sentence means');
+    if (!(st.keyword || '').trim()) left.push('Step 2: Write what your keyword means');
+    return left;
+  }
+  function leftHTML(st) {
+    const left = leftToDo(st);
+    return left.length ? `<b>To continue, finish:</b><ul>${left.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+  }
+  function updateReady(st) {
+    const fin = document.getElementById('finish'), box = document.getElementById('left');
+    if (!fin || !box) return;
+    const n = leftToDo(st).length;
+    fin.disabled = n > 0; box.hidden = n === 0; box.innerHTML = leftHTML(st);
+  }
+
   function workView(f, st) {
-    return `<div class="desk">
+    return `<div class="desk work">
       <div class="col">
         <section class="card">
           <p class="eyebrow">Your Elvish sentence</p>
@@ -571,32 +634,22 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
         </section>
         <section class="todo">
           <b>What to do</b>
-          <ol>
-            <li>Open each of the four resources. Use them in any order.</li>
-            <li>Write what you think your sentence means.</li>
-            <li>Write what you think your keyword means.</li>
-            <li>Be ready to tell the class which resource helped most.</li>
-          </ol>
+          <ul class="steps-list">
+            <li><b>Step 1:</b> Open each of the four approaches, in any order.</li>
+            <li><b>Step 2:</b> Write what you think your sentence and your yellow keyword mean.</li>
+          </ul>
+          <span><b>Open all four approaches and add your guesses to continue.</b></span>
         </section>
         <section class="card">
-          <label class="field" for="meaning">What we think our sentence means <span class="muted small" style="font-weight:400">It’s okay to change it as you go.</span><textarea id="meaning" style="min-height:4.5rem">${esc(st.meaning)}</textarea></label>
-          <label class="field" for="keyword">What we think our keyword means<input type="text" id="keyword" value="${esc(st.keyword)}" placeholder="One word is fine"></label>
+          <h3>Step 2 · Write your answers</h3>
+          <label class="field" for="meaning">What does your sentence mean? <span class="muted small" style="font-weight:400">It’s okay to change it as you go.</span><textarea id="meaning" style="min-height:4.5rem">${esc(st.meaning)}</textarea></label>
+          <label class="field" for="keyword">What does your yellow keyword mean?<input type="text" id="keyword" value="${esc(st.keyword)}" placeholder="One word is fine"></label>
         </section>
-        <details class="card clue-box" id="notebook" ${st.notesOpen || st.clues.length ? 'open' : ''}>
-          <summary>Clue notebook <span class="muted small" style="font-weight:400">(optional${st.clues.length ? ` · ${st.clues.length} clue${st.clues.length > 1 ? 's' : ''}` : ''})</span></summary>
-          <p class="muted small">Tap a word above, then write what you think it means.</p>
-          <div class="clues" id="clues">${st.clues.map((c, i) => `<div class="clue"><b>${esc(c.el)}</b><span>→ ${esc(c.means)}</span><button type="button" data-del="${i}" aria-label="Remove clue">Remove</button></div>`).join('')}</div>
-          <div class="add-clue">
-            <label for="clue-el">Word<input type="text" id="clue-el" placeholder="e.g. word 2"></label>
-            <label for="clue-means">We think it means<input type="text" id="clue-means" placeholder="e.g. maybe “door”"></label>
-            <button type="button" id="add-clue">+ Add clue</button>
-          </div>
-        </details>
-        <p class="nudge" id="nudge" role="status" hidden>Add your best guess first. It’s okay if you’re not sure.</p>
-        <div class="actions"><button type="button" class="primary" id="finish">We’re ready to share</button></div>
+        <div class="actions"><button type="button" class="primary" id="finish" ${leftToDo(st).length ? 'disabled' : ''}>We’re ready to share</button></div>
+        <div class="nudge" id="left" role="status" aria-live="polite" ${leftToDo(st).length ? '' : 'hidden'}>${leftHTML(st)}</div>
       </div>
       <aside class="col res" aria-label="Four resources" id="res">
-        <h3>Four ways in</h3>
+        <h3>Step 1 · Four ways in</h3>
         ${resourcePanel(f, st)}
       </aside>
     </div>`;
@@ -612,7 +665,6 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
           <tr><th scope="row">What we noticed first</th><td>${st.first ? esc(st.first) : '<span class="muted">—</span>'}</td></tr>
           <tr><th scope="row">What we think it means</th><td><b>${st.meaning ? esc(st.meaning) : '—'}</b></td></tr>
           <tr><th scope="row">Our keyword</th><td><b>${st.keyword ? esc(st.keyword) : '—'}</b></td></tr>
-          ${st.clues.length ? `<tr><th scope="row">Clues</th><td>${st.clues.map(c => `<span class="pill tag">${esc(c.el)} → ${esc(c.means)}</span>`).join('')}</td></tr>` : ''}
         </tbody></table></div>
       </section>
       <section class="card">
@@ -667,8 +719,8 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
       st.clues.push({ el, means }); selWord = null; save(); renderDesk();
     });
     app.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => { st.clues.splice(Number(b.dataset.del), 1); save(); renderDesk(); }));
-    const m = document.getElementById('meaning'); if (m) m.addEventListener('input', e => { st.meaning = e.target.value; save(); });
-    const kw = document.getElementById('keyword'); if (kw) kw.addEventListener('input', e => { st.keyword = e.target.value; save(); });
+    const m = document.getElementById('meaning'); if (m) m.addEventListener('input', e => { st.meaning = e.target.value; save(); updateReady(st); });
+    const kw = document.getElementById('keyword'); if (kw) kw.addEventListener('input', e => { st.keyword = e.target.value; save(); updateReady(st); });
     const nt = document.getElementById('noticed'); if (nt) nt.addEventListener('input', e => { st.noticed = e.target.value; save(); });
     app.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.tab; st.tab = t; if (!st.open.includes(t)) st.open.push(t); save(); renderDesk(); scrollToCard(t);
@@ -676,7 +728,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     app.querySelectorAll('[data-help]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.help, k = Number(b.dataset.k), arr = st.helped[t] || (st.helped[t] = []);
       const at = arr.indexOf(k); if (at < 0) arr.push(k); else arr.splice(at, 1);
-      b.setAttribute('aria-pressed', String(at < 0)); save();
+      b.setAttribute('aria-pressed', String(at < 0)); save(); updateReady(st);
       const hl = document.getElementById('helped-line'); if (hl) hl.textContent = '✓ Opened' + (arr.length ? ' · Helped us: ' + arr.map(x => HELPED[x]).join(' · ') : '');
     }));
     app.querySelectorAll('[data-say]').forEach(b => b.addEventListener('click', () => sayAloud(b.dataset.say)));
@@ -691,8 +743,7 @@ input[type=text] { font: inherit; width: 100%; padding: .5rem .65rem; border-rad
     }));
     const nb = document.getElementById('notebook'); if (nb) nb.addEventListener('toggle', () => { st.notesOpen = nb.open; save(); });
     const fin = document.getElementById('finish'); if (fin) fin.addEventListener('click', () => {
-      const nudge = document.getElementById('nudge');
-      if (!st.meaning.trim() && nudge.hidden) { nudge.hidden = false; fin.textContent = 'Continue anyway'; return; }
+      if (leftToDo(st).length) { updateReady(st); return; }
       st.stage = 'done'; save(); renderDesk(); window.scrollTo(0, 0); });
     const unlock = document.getElementById('unlock');
     if (unlock) {
